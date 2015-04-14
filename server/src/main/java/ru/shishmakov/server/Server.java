@@ -12,8 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-
-public class ServerPingPong {
+/**
+ *
+ *
+ * @author Dmitriy Shishmakov
+ */
+public class Server {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
@@ -21,7 +25,7 @@ public class ServerPingPong {
     public static void main(String[] args) {
         try {
             final int port = Integer.parseInt(args[0]);
-            new ServerPingPong().run(port);
+            new Server().run(port);
         } catch (InterruptedException e) {
             logger.error("The server failure: " + e.getMessage(), e);
         }
@@ -36,7 +40,7 @@ public class ServerPingPong {
             server.group(bootGroup, processGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new ServeChannelHandler());// todo: haven't done
+                    .childHandler(new ServerChannelHandler());
 
             final Channel serverChannel = server.bind(port).sync().channel();
             logger.info("Start the server: {}. Listen on: {}", this.getClass().getSimpleName(), serverChannel.localAddress());

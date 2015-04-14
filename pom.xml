@@ -20,6 +20,7 @@
 
         <log4j.version>1.2.17</log4j.version>
         <slf4j.version>1.7.12</slf4j.version>
+        <netty-all.version>4.0.27.Final</netty-all.version>
     </properties>
 
     <dependencyManagement>
@@ -27,7 +28,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
-                <version>4.0.27.Final</version>
+                <version>${netty-all.version}</version>
             </dependency>
 
             <dependency>
