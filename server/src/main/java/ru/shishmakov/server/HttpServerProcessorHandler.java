@@ -3,6 +3,7 @@ package ru.shishmakov.server;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
@@ -17,7 +18,7 @@ import java.lang.invoke.MethodHandles;
  * @author Dmitriy Shishmakov
  * @see ServerChannelHandler
  */
-public class HttpProcessorHandler extends SimpleChannelInboundHandler<HttpObject> {
+public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
@@ -26,7 +27,7 @@ public class HttpProcessorHandler extends SimpleChannelInboundHandler<HttpObject
      * @param autoRelease {@code true} if handled message should be released and not transfer to the next pipe;
      *                    {@code false} otherwise
      */
-    public HttpProcessorHandler(boolean autoRelease) {
+    public HttpServerProcessorHandler(boolean autoRelease) {
         super(autoRelease);
         //todo: if false -> ReferenceCountUtil.retain(msg);
     }
@@ -42,19 +43,29 @@ public class HttpProcessorHandler extends SimpleChannelInboundHandler<HttpObject
         ctx.close();
     }
 
+    /**
+     * Main method processes each incoming message
+     *
+     * @param ctx instance to interact with {@link ChannelPipeline} and other handlers
+     * @param msg the message to handle
+     * @throws Exception is thrown if an error occurred
+     */
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final HttpObject msg) throws Exception {
+        final StringBuilder buffer = new StringBuilder(16);
         if (msg instanceof FullHttpRequest) {
-            this.handleHttpRequest(ctx, (FullHttpRequest) msg);
+            this.handleHttpRequest(ctx, (FullHttpRequest) msg, buffer);
         } else {
             logger.warn("Illegal protocol: {}. Expect instance is {}", msg, FullHttpRequest.class.getSimpleName());
-            //todo: response
+            final HttpResponseStatus status = HttpResponseStatus.BAD_REQUEST;
+            buffer.append("Failure: ").append(status).append("\r\n");
+            fillHttpResponse(ctx, buffer, status);
         }
         ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
     }
 
-    private void handleHttpRequest(final ChannelHandlerContext ctx, final FullHttpRequest request) {
-        final StringBuilder buffer = new StringBuilder(16);
+    private void handleHttpRequest(final ChannelHandlerContext ctx, final FullHttpRequest request,
+                                   final StringBuilder buffer) {
         // Handle a bad request.
         if (!request.getDecoderResult().isSuccess()) {
             final HttpResponseStatus status = HttpResponseStatus.BAD_REQUEST;
@@ -64,17 +75,20 @@ public class HttpProcessorHandler extends SimpleChannelInboundHandler<HttpObject
         }
         // Handle method of request.
         if (request.getMethod() == HttpMethod.POST) {
-            final HttpResponseStatus status = HttpResponseStatus.OK;
-            fillHttpResponse(ctx, buffer, status);
-            return;
-        }else {
+            processPost(ctx, request, buffer);
+        } else {
             final HttpResponseStatus status = HttpResponseStatus.METHOD_NOT_ALLOWED;
             buffer.append("Failure: ").append(status).append("\r\n");
             fillHttpResponse(ctx, buffer, status);
         }
+    }
 
+    private void processPost(final ChannelHandlerContext ctx, final FullHttpRequest request, final StringBuilder buffer) {
+        final String uri = request.getUri();
+        final String[] chunks = uri.split("/");
 
-        fillHttpResponse(ctx, buffer, HttpResponseStatus.OK);
+        final HttpResponseStatus status = HttpResponseStatus.OK;
+        fillHttpResponse(ctx, buffer, status);
     }
 
     private void fillHttpResponse(final ChannelHandlerContext ctx, final CharSequence buffer, final HttpResponseStatus status) {
