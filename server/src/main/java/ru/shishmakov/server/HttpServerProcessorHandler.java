@@ -1,5 +1,6 @@
 package ru.shishmakov.server;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -74,7 +75,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
             return;
         }
         // Handle method of request.
-        if (request.getMethod() == HttpMethod.POST) {
+        if (HttpMethod.POST.equals(request.getMethod())) {
             processPost(ctx, request, buffer);
         } else {
             final HttpResponseStatus status = HttpResponseStatus.METHOD_NOT_ALLOWED;
@@ -87,14 +88,32 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
         final String uri = request.getUri();
         final String[] chunks = uri.split("/");
 
+        logger.info("client localAddress: {}", ctx.channel().localAddress());
+        logger.info("client remoteAddress: {}", ctx.channel().remoteAddress());
+        final ByteBuf content = request.content();
+        byte[] bytes;
+        int offset;
+        int length = content.readableBytes();
+
+        if (content.hasArray()) {
+            bytes = content.array();
+            offset = content.arrayOffset();
+        } else {
+            bytes = new byte[length];
+            content.getBytes(content.readerIndex(), bytes);
+            offset = 0;
+        }
+
+
+        buffer.append("{\"action\":\"pong\"").append(",").append(" \"content\":\"pong N\"}");
         final HttpResponseStatus status = HttpResponseStatus.OK;
         fillHttpResponse(ctx, buffer, status);
     }
 
     private void fillHttpResponse(final ChannelHandlerContext ctx, final CharSequence buffer, final HttpResponseStatus status) {
-        final FullHttpResponse response = new DefaultFullHttpResponse(
-                HttpVersion.HTTP_1_1, status, Unpooled.copiedBuffer(buffer.toString(), CharsetUtil.UTF_8));
-        response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
+        final ByteBuf data = Unpooled.copiedBuffer(buffer, CharsetUtil.UTF_8);
+        final FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, data);
+        response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
         ctx.write(response);
     }
 
