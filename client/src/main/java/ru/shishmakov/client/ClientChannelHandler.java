@@ -13,7 +13,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 public class ClientChannelHandler extends ChannelInitializer<SocketChannel> {
 
     @Override
-    public void initChannel(SocketChannel ch) throws Exception {
+    public void initChannel(final SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline
                 // inbound/outbound

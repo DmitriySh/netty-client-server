@@ -17,6 +17,12 @@ public class HttpClientProcessorHandler extends SimpleChannelInboundHandler<Http
             .lookup().lookupClass());
 
     @Override
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
+        logger.error("Fail at handler: " + cause.getMessage(), cause);
+        ctx.close();
+    }
+
+    @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final HttpObject msg) throws Exception {
         if (msg instanceof FullHttpResponse) {
             final FullHttpResponse response = (FullHttpResponse) msg;
@@ -24,11 +30,5 @@ public class HttpClientProcessorHandler extends SimpleChannelInboundHandler<Http
             logger.info("Send HTTP response: {} {} {}; content: {}", response.getProtocolVersion(),
                     response.getStatus(), data);
         }
-    }
-
-    @Override
-    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
-        logger.error("Fail at handler: " + cause.getMessage(), cause);
-        ctx.close();
     }
 }

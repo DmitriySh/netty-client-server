@@ -24,27 +24,13 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
 
-    /**
-     * @param autoRelease {@code true} if handled message should be released and not transfer to the next pipe;
-     *                    {@code false} otherwise
-     */
-    public HttpServerProcessorHandler(boolean autoRelease) {
-        super(autoRelease);
-        //todo: if false -> ReferenceCountUtil.retain(msg);
-    }
-
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
         logger.error("Fail at handler: " + cause.getMessage(), cause);
         ctx.close();
     }
 
-    /**
+/**
      * Main method processes each incoming message
      *
      * @param ctx instance to interact with {@link ChannelPipeline} and other handlers
@@ -62,7 +48,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
             buffer.append("Failure: ").append(status).append("\r\n");
             fillHttpResponse(ctx, buffer, status);
         }
-
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
     }
 
     private void handleHttpRequest(final ChannelHandlerContext ctx, final FullHttpRequest request,
@@ -90,20 +76,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
 
         logger.info("client localAddress: {}", ctx.channel().localAddress());
         logger.info("client remoteAddress: {}", ctx.channel().remoteAddress());
-        final ByteBuf content = request.content();
-        byte[] bytes;
-        int offset;
-        int length = content.readableBytes();
-
-        if (content.hasArray()) {
-            bytes = content.array();
-            offset = content.arrayOffset();
-        } else {
-            bytes = new byte[length];
-            content.getBytes(content.readerIndex(), bytes);
-            offset = 0;
-        }
-
+        logger.info("client data: {}", request.content().toString(CharsetUtil.UTF_8));
 
         buffer.append("{\"action\":\"pong\"").append(",").append(" \"content\":\"pong N\"}");
         final HttpResponseStatus status = HttpResponseStatus.OK;
