@@ -18,9 +18,11 @@ class ServerChannelHandler extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel ch) throws Exception {
         final ChannelPipeline pipeline = ch.pipeline();
         pipeline
+                // inbound
                 .addLast("decoder", new HttpRequestDecoder())
                 .addLast("aggregator", new HttpObjectAggregator(1048576))
-                .addLast("processor", new HttpProcessorHandler(true)/*todo: or false?*/)
+                .addLast("processor", new HttpServerProcessorHandler(true)/*todo: or false?*/)
+                // outbound
                 .addLast("encoder", new HttpResponseEncoder());
 
     }

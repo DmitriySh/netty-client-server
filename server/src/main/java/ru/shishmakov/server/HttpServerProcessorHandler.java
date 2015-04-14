@@ -34,7 +34,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        ctx.flush();
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
      */
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final HttpObject msg) throws Exception {
-        final StringBuilder buffer = new StringBuilder(16);
+        final StringBuilder buffer = new StringBuilder(128);
         if (msg instanceof FullHttpRequest) {
             this.handleHttpRequest(ctx, (FullHttpRequest) msg, buffer);
         } else {
@@ -61,7 +61,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
             buffer.append("Failure: ").append(status).append("\r\n");
             fillHttpResponse(ctx, buffer, status);
         }
-        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+
     }
 
     private void handleHttpRequest(final ChannelHandlerContext ctx, final FullHttpRequest request,
