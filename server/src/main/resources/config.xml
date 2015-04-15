@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+    <bind>
+        <host>127.0.0.1</host>
+        <port>80</port>
+    </bind>
+
+    <database>
+        <host>192.168.0.102</host>
+        <port>27017</port>
+        <databaseName>udptracker</databaseName>
+    </database>
+
+    <maxNumWant>100</maxNumWant>
+    <interval>60</interval>
+</config>

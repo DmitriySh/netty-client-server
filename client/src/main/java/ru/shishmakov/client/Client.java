@@ -12,6 +12,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shishmakov.config.Config;
 
 import java.lang.invoke.MethodHandles;
 
@@ -77,10 +78,11 @@ public class Client {
     }
 
     public static void main(final String[] args) throws Exception {
-        final String host = String.valueOf(args[0]);
-        final int port = Integer.parseInt(args[1]);
-        final String uri = String.valueOf(args[2]);
         try {
+            final Config config = Config.getInstance();
+            final String host = config.getString("connect.host", "127.0.0.1");
+            final int port = config.getInt("connect.port", 80);
+            final String uri = config.getString("connect.uri", "/handler");
             new Client(host, port, uri).run();
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);

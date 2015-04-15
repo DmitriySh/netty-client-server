@@ -10,6 +10,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shishmakov.config.Config;
 
 import java.lang.invoke.MethodHandles;
 
@@ -58,13 +59,10 @@ public class Server {
     }
 
     public static void main(final String[] args) {
-        if (args.length != 2) {
-            logger.error("Failed to start; pay attention to use {}: <host> <port>", Server.class.getSimpleName());
-            return;
-        }
         try {
-            final String host = String.valueOf(args[0]);
-            final int port = Integer.parseInt(args[1]);
+            final Config config = Config.getInstance();
+            final String host = config.getString("bind.host", "127.0.0.1");
+            final int port = config.getInt("bind.port", 80);
             new Server(host, port).run();
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);
