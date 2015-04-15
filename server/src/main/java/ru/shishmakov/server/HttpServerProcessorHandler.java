@@ -25,8 +25,10 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
+    private static final String HANDLER_URI = "/handler";
+    private static final String AUTHOR_URI = "/author";
 
-    final StringBuilder buffer = new StringBuilder(128);
+    private final StringBuilder buffer = new StringBuilder(128);
 
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
@@ -64,31 +66,71 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
      */
     private void handleHttpRequest(final ChannelHandlerContext ctx, final FullHttpRequest request,
                                    final StringBuilder buffer) {
+        logger.info("client localAddress: {}", ctx.channel().localAddress());
+        logger.info("client remoteAddress: {}", ctx.channel().remoteAddress());
         if (HttpMethod.POST.equals(request.getMethod())) {
             processPost(ctx, request, buffer);
         } else {
-            final HttpResponseStatus status = HttpResponseStatus.METHOD_NOT_ALLOWED;
-            final Protocol protocol = new Protocol("error");
-            protocol.setContent("Ping Pong server failure");
-            protocol.setStatus(String.valueOf(status));
-            final String json = new Gson().toJson(protocol);
-            buffer.append(json).append("\r\n");
-            fillHttpResponse(ctx, buffer.toString(), status);
+            buildResponseHttp405(ctx);
         }
     }
 
     private void processPost(final ChannelHandlerContext ctx, final FullHttpRequest request, final StringBuilder buffer) {
-        final String uri = request.getUri();
-        final String[] chunks = uri.split("/");
-
-        logger.info("client localAddress: {}", ctx.channel().localAddress());
-        logger.info("client remoteAddress: {}", ctx.channel().remoteAddress());
         ByteBuf content = request.content();
+        final String uri = request.getUri();
         if (content.isReadable()) {
-            logger.info("client data: {}", content.toString(CharsetUtil.UTF_8));
+            logger.info("client 'uri': {} 'data': {}", uri, content.toString(CharsetUtil.UTF_8));
         }
+        switch (uri) {
+            case HANDLER_URI: {
+
+                break;
+            }
+            case AUTHOR_URI: {
+                buildAuthorResponseHttp200(ctx);
+                return;
+            }
+            default: {
+                buildResponseHttp400(ctx);
+                return;
+            }
+        }
+
+
+
+
         buffer.append("{'action':'pong'").append(",").append(" 'content':'pong N'}");
         final HttpResponseStatus status = HttpResponseStatus.OK;
+        fillHttpResponse(ctx, buffer.toString(), status);
+    }
+
+    private void buildAuthorResponseHttp200(final ChannelHandlerContext ctx) {
+        final HttpResponseStatus status = HttpResponseStatus.OK;
+        final Protocol protocol = new Protocol("author");
+        protocol.setContent("Dmitriy Shishmakov, https://github.com/DmitriySh");
+        protocol.setStatus(String.valueOf(status));
+        final String json = new Gson().toJson(protocol);
+        buffer.append(json).append("\r\n");
+        fillHttpResponse(ctx, buffer.toString(), status);
+    }
+
+    private void buildResponseHttp400(final ChannelHandlerContext ctx) {
+        final HttpResponseStatus status = HttpResponseStatus.BAD_REQUEST;
+        final Protocol protocol = new Protocol("error");
+        protocol.setContent("Ping Pong server can not parse URI of the request");
+        protocol.setStatus(String.valueOf(status));
+        final String json = new Gson().toJson(protocol);
+        buffer.append(json).append("\r\n");
+        fillHttpResponse(ctx, buffer.toString(), status);
+    }
+
+    private void buildResponseHttp405(final ChannelHandlerContext ctx) {
+        final HttpResponseStatus status = HttpResponseStatus.METHOD_NOT_ALLOWED;
+        final Protocol protocol = new Protocol("error");
+        protocol.setContent("Ping Pong server failure");
+        protocol.setStatus(String.valueOf(status));
+        final String json = new Gson().toJson(protocol);
+        buffer.append(json).append("\r\n");
         fillHttpResponse(ctx, buffer.toString(), status);
     }
 

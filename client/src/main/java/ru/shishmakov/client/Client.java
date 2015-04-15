@@ -43,24 +43,15 @@ public class Client {
                     .channel(NioSocketChannel.class)
                     .handler(new ClientChannelHandler());
 
-            final String jsonMessage = "{\"action\":\"ping\"}";
-            final ByteBuf content = Unpooled.copiedBuffer(jsonMessage, CharsetUtil.UTF_8);
-            final FullHttpRequest request =
-                    new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri, content);
-            final HttpHeaders headers = request.headers();
-            headers.set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
-            headers.set(HttpHeaders.Names.ACCEPT, "application/json");
-            headers.set(HttpHeaders.Names.USER_AGENT, "Netty 4.0");
-            headers.set(HttpHeaders.Names.HOST, host);
-            headers.set(HttpHeaders.Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()));
+            final String json = "{\"action\":\"ping\"}";
+            final FullHttpRequest request = buildFullHttpRequest(json);
 
             final Channel clientChannel = client.connect(host, port).sync().channel();
             logger.info("Start the client: {}. Listen on local address: {}; remote address: {}",
                     this.getClass().getSimpleName(), clientChannel.localAddress(), clientChannel.remoteAddress());
             clientChannel.writeAndFlush(request);
             logger.info("Send HTTP request: {} {} {}; content: {}", request.getMethod(), request.getUri(),
-                    request.getProtocolVersion(), jsonMessage);
-
+                    request.getProtocolVersion(), json);
             clientChannel.closeFuture().sync();
             logger.info("Server to close the connection: {}", Client.class.getSimpleName());
         } finally {
@@ -69,6 +60,19 @@ public class Client {
             // waiting termination of all threads
             group.terminationFuture().sync();
         }
+    }
+
+    private FullHttpRequest buildFullHttpRequest(String jsonMessage) {
+        final ByteBuf content = Unpooled.copiedBuffer(jsonMessage, CharsetUtil.UTF_8);
+        final FullHttpRequest request =
+                new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri, content);
+        final HttpHeaders headers = request.headers();
+        headers.set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
+        headers.set(HttpHeaders.Names.ACCEPT, "application/json");
+        headers.set(HttpHeaders.Names.USER_AGENT, "Netty 4.0");
+        headers.set(HttpHeaders.Names.HOST, host);
+        headers.set(HttpHeaders.Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()));
+        return request;
     }
 
     public static void main(final String[] args) throws Exception {
