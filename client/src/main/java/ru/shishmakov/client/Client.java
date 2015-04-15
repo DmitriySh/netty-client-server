@@ -14,8 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.net.InetSocketAddress;
-import java.net.URI;
 
 
 /**
@@ -27,14 +25,12 @@ public class Client {
             .lookup().lookupClass());
 
     private final String host;
-    private final int remotePort;
-    private final int localPort;
-    private final URI uri;
+    private final int port;
+    private final String uri;
 
-    public Client(final String host, final int remotePort, int localPort, final URI uri) {
+    public Client(final String host, final int port, final String uri) {
         this.host = host;
-        this.remotePort = remotePort;
-        this.localPort = localPort;
+        this.port = port;
         this.uri = uri;
     }
 
@@ -45,22 +41,20 @@ public class Client {
             final Bootstrap client = new Bootstrap();
             client.group(group)
                     .channel(NioSocketChannel.class)
-                    .localAddress(new InetSocketAddress(host, localPort))
-                    .remoteAddress(new InetSocketAddress(host, remotePort))
                     .handler(new ClientChannelHandler());
 
             final String jsonMessage = "{\"action\":\"ping\"}";
             final ByteBuf content = Unpooled.copiedBuffer(jsonMessage, CharsetUtil.UTF_8);
             final FullHttpRequest request =
-                    new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/handler", content);
+                    new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri, content);
             final HttpHeaders headers = request.headers();
             headers.set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
             headers.set(HttpHeaders.Names.ACCEPT, "application/json");
             headers.set(HttpHeaders.Names.USER_AGENT, "Netty 4.0");
-            headers.set(HttpHeaders.Names.HOST, "localhost:2525");
+            headers.set(HttpHeaders.Names.HOST, host);
             headers.set(HttpHeaders.Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()));
 
-            final Channel clientChannel = client.connect(host, remotePort).sync().channel();
+            final Channel clientChannel = client.connect(host, port).sync().channel();
             logger.info("Start the client: {}. Listen on local address: {}; remote address: {}",
                     this.getClass().getSimpleName(), clientChannel.localAddress(), clientChannel.remoteAddress());
             clientChannel.writeAndFlush(request);
@@ -78,12 +72,11 @@ public class Client {
     }
 
     public static void main(final String[] args) throws Exception {
-        final URI uri = new URI("localhost/handler");
-        final String host = "localhost";
-        int remotePort = 2525;
-        int localPort = 3535;
+        final String host = String.valueOf(args[0]);
+        final int port = Integer.parseInt(args[1]);
+        final String uri = String.valueOf(args[2]);
         try {
-            new Client(host, remotePort, localPort, uri).run();
+            new Client(host, port, uri).run();
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);
         }

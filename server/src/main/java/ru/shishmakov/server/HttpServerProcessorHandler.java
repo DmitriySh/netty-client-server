@@ -1,5 +1,6 @@
 package ru.shishmakov.server;
 
+import com.google.gson.Gson;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -10,6 +11,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shishmakov.entity.Protocol;
 
 import java.lang.invoke.MethodHandles;
 
@@ -53,14 +55,24 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
         }
     }
 
+    /**
+     * Handle the HttpRequest from client. Build a new HttpResponse and send to client.
+     *
+     * @param ctx     instance to interact with {@link ChannelPipeline} and other handlers
+     * @param request instance of {@link FullHttpRequest}
+     * @param buffer  container of string data for the request body
+     */
     private void handleHttpRequest(final ChannelHandlerContext ctx, final FullHttpRequest request,
                                    final StringBuilder buffer) {
-        // Handle method of request.
         if (HttpMethod.POST.equals(request.getMethod())) {
             processPost(ctx, request, buffer);
         } else {
             final HttpResponseStatus status = HttpResponseStatus.METHOD_NOT_ALLOWED;
-            buffer.append("Failure: ").append(status).append("\r\n");
+            final Protocol protocol = new Protocol("error");
+            protocol.setContent("Ping Pong server failure");
+            protocol.setStatus(String.valueOf(status));
+            final String json = new Gson().toJson(protocol);
+            buffer.append(json).append("\r\n");
             fillHttpResponse(ctx, buffer.toString(), status);
         }
     }
@@ -75,7 +87,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
         if (content.isReadable()) {
             logger.info("client data: {}", content.toString(CharsetUtil.UTF_8));
         }
-        buffer.append("{\"action\":\"pong\"").append(",").append(" \"content\":\"pong N\"}");
+        buffer.append("{'action':'pong'").append(",").append(" 'content':'pong N'}");
         final HttpResponseStatus status = HttpResponseStatus.OK;
         fillHttpResponse(ctx, buffer.toString(), status);
     }
