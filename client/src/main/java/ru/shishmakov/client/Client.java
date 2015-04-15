@@ -70,6 +70,7 @@ public class Client {
         headers.set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
         headers.set(HttpHeaders.Names.ACCEPT, "application/json");
         headers.set(HttpHeaders.Names.USER_AGENT, "Netty 4.0");
+        headers.set(HttpHeaders.Names.COOKIE, "id=client12");
         headers.set(HttpHeaders.Names.HOST, host);
         headers.set(HttpHeaders.Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()));
         return request;
