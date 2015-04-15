@@ -31,6 +31,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
     private static final String AUTHOR_URI = "/author";
 
     private final StringBuilder buffer = new StringBuilder(128);
+    private final Gson gson = new Gson();
     private Set<Cookie> cookies;
 
     @Override
@@ -41,7 +42,6 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
-        logger.info("// ---------------- end client ");
         ctx.flush();
     }
 
@@ -64,6 +64,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
             }
             handleHttpRequest(ctx, (FullHttpRequest) msg, buffer);
             ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+            logger.info("// ---------------- end client ");
         }
     }
 
@@ -107,11 +108,11 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
 
     private void buildResponseHttp200(final ChannelHandlerContext ctx, final FullHttpRequest request) {
         final String data = request.content().toString(CharsetUtil.UTF_8);
-        final Protocol protocol = new Gson().fromJson(data, Protocol.class);
+        final Protocol protocol = buildFromJson(data);
         if ("ping".equalsIgnoreCase(protocol.getAction())) {
             final Protocol temp = new Protocol("pong");
             temp.setContent("pong N");
-            final String json = new Gson().toJson(temp);
+            final String json = gson.toJson(temp);
             buffer.append(json).append("\r\n");
             final HttpResponseStatus status = HttpResponseStatus.OK;
             fillHttpResponse(ctx, buffer.toString(), status);
@@ -125,7 +126,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
         final Protocol protocol = new Protocol("author");
         protocol.setContent("Dmitriy Shishmakov, https://github.com/DmitriySh");
         protocol.setStatus(String.valueOf(status));
-        final String json = new Gson().toJson(protocol);
+        final String json = gson.toJson(protocol);
         buffer.append(json).append("\r\n");
         fillHttpResponse(ctx, buffer.toString(), status);
     }
@@ -135,7 +136,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
         final Protocol protocol = new Protocol("error");
         protocol.setContent("Ping Pong server can not parse " + content + " of the request");
         protocol.setStatus(String.valueOf(status));
-        final String json = new Gson().toJson(protocol);
+        final String json = gson.toJson(protocol);
         buffer.append(json).append("\r\n");
         fillHttpResponse(ctx, buffer.toString(), status);
     }
@@ -145,7 +146,7 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
         final Protocol protocol = new Protocol("error");
         protocol.setContent("Ping Pong server failure");
         protocol.setStatus(String.valueOf(status));
-        final String json = new Gson().toJson(protocol);
+        final String json = gson.toJson(protocol);
         buffer.append(json).append("\r\n");
         fillHttpResponse(ctx, buffer.toString(), status);
     }
@@ -166,6 +167,14 @@ public class HttpServerProcessorHandler extends SimpleChannelInboundHandler<Http
             return Collections.emptySet();
         }
         return CookieDecoder.decode(cookieHeader);
+    }
+
+    private Protocol buildFromJson(String data) {
+        try {
+            return gson.fromJson(data, Protocol.class);
+        } catch (Exception e) {
+            return new Protocol("");
+        }
     }
 
 }
