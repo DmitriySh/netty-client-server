@@ -58,7 +58,6 @@ public class Client {
             headers.set(HttpHeaders.Names.ACCEPT, "application/json");
             headers.set(HttpHeaders.Names.USER_AGENT, "Netty 4.0");
             headers.set(HttpHeaders.Names.HOST, "localhost:2525");
-            headers.set(HttpHeaders.Names.CONNECTION, "keep-alive");
             headers.set(HttpHeaders.Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()));
 
             final Channel clientChannel = client.connect(host, remotePort).sync().channel();
@@ -68,9 +67,8 @@ public class Client {
             logger.info("Send HTTP request: {} {} {}; content: {}", request.getMethod(), request.getUri(),
                     request.getProtocolVersion(), jsonMessage);
 
-            // wait for the server to close the connection.
             clientChannel.closeFuture().sync();
-            logger.info("Shutdown the client: {}", Client.class.getSimpleName());
+            logger.info("Server to close the connection: {}", Client.class.getSimpleName());
         } finally {
             // shutdown all events
             group.shutdownGracefully();

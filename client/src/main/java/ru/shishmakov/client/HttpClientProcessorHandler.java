@@ -27,7 +27,7 @@ public class HttpClientProcessorHandler extends SimpleChannelInboundHandler<Http
         if (msg instanceof FullHttpResponse) {
             final FullHttpResponse response = (FullHttpResponse) msg;
             final String data = response.content().toString(CharsetUtil.UTF_8);
-            logger.info("Send HTTP response: {} {} {}; content: {}", response.getProtocolVersion(),
+            logger.info("Receive HTTP response: {} {}; content: {}", response.getProtocolVersion(),
                     response.getStatus(), data);
         }
     }

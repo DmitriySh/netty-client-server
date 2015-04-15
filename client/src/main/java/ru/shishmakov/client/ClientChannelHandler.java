@@ -16,9 +16,7 @@ public class ClientChannelHandler extends ChannelInitializer<SocketChannel> {
     public void initChannel(final SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline
-                // inbound/outbound
                 .addLast("codec", new HttpClientCodec())
-                // inbound
                 .addLast("aggregator", new HttpObjectAggregator(1048576))
                 .addLast("processor", new HttpClientProcessorHandler());
     }
