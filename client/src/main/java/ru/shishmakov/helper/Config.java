@@ -1,4 +1,4 @@
-package ru.shishmakov.config;
+package ru.shishmakov.helper;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;

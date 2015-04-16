@@ -12,7 +12,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.shishmakov.config.Config;
+import ru.shishmakov.helper.Config;
 
 import java.lang.invoke.MethodHandles;
 
@@ -71,7 +71,9 @@ public class Client {
         headers.set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
         headers.set(HttpHeaders.Names.ACCEPT, "application/json");
         headers.set(HttpHeaders.Names.USER_AGENT, "Netty 4.0");
-        headers.set(HttpHeaders.Names.COOKIE, "id=client12");
+//        headers.set(HttpHeaders.Names.COOKIE, "id=client12");
+//        headers.set(HttpHeaders.Names.COOKIE, "name2=value2; Expires=Wed, 09 Jun 2021 10:18:14 GMT");
+        headers.set(HttpHeaders.Names.COOKIE, "name=value; name2=value2");
         headers.set(HttpHeaders.Names.HOST, host);
         headers.set(HttpHeaders.Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()));
         return request;

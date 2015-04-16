@@ -11,8 +11,8 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.shishmakov.config.Config;
-import ru.shishmakov.config.Database;
+import ru.shishmakov.helper.Config;
+import ru.shishmakov.helper.Database;
 
 import java.lang.invoke.MethodHandles;
 

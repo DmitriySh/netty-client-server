@@ -1,4 +1,4 @@
-package ru.shishmakov.config;
+package ru.shishmakov.helper;
 
 
 import com.mongodb.*;
