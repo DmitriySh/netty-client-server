@@ -1,6 +1,7 @@
 package ru.shishmakov.server;
 
 
+import com.mongodb.MongoClient;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
@@ -11,6 +12,7 @@ import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.shishmakov.config.Config;
+import ru.shishmakov.config.Database;
 
 import java.lang.invoke.MethodHandles;
 
@@ -48,7 +50,7 @@ public class Server {
             logger.info("Start the server: {}. Listen on: {}", this.getClass().getSimpleName(), serverChannel.localAddress());
             serverChannel.closeFuture().sync();
             logger.info("Shutdown the server: {}", serverChannel);
-        } catch (Exception e) {
+        } finally {
             // shutdown all events
             bootGroup.shutdownGracefully();
             processGroup.shutdownGracefully();
@@ -59,13 +61,19 @@ public class Server {
     }
 
     public static void main(final String[] args) {
+        MongoClient mongo = null;
         try {
             final Config config = Config.getInstance();
+            mongo = Database.getInstance(config);
             final String host = config.getString("bind.host", "127.0.0.1");
             final int port = config.getInt("bind.port", 80);
             new Server(host, port).run();
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);
+        } finally {
+            if (mongo != null) {
+                mongo.close();
+            }
         }
     }
 

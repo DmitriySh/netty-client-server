@@ -80,9 +80,9 @@ public class Client {
     public static void main(final String[] args) throws Exception {
         try {
             final Config config = Config.getInstance();
-            final String host = config.getString("connect.host", "127.0.0.1");
-            final int port = config.getInt("connect.port", 80);
-            final String uri = config.getString("connect.uri", "/handler");
+            final String host = config.getString("connect.host");
+            final int port = config.getInt("connect.port");
+            final String uri = config.getString("connect.uri");
             new Client(host, port, uri).run();
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);

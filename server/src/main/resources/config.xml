@@ -6,11 +6,10 @@
     </bind>
 
     <database>
-        <host>192.168.0.102</host>
+        <host>127.0.0.1</host>
         <port>27017</port>
-        <databaseName>udptracker</databaseName>
+        <user>pingponguser</user>
+        <password>pingponguser</password>
+        <databaseName>pingpong</databaseName>
     </database>
-
-    <maxNumWant>100</maxNumWant>
-    <interval>60</interval>
 </config>
