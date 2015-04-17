@@ -7,9 +7,21 @@ This is a prototype game. Consist of two parts: client and server. `Client` perf
   
 ## Rules:  
 
-  * Client creates message with text `ping` and sends Http Request to server by POST method; example:`{ "action": "ping"}`.  
-  * Server receives request and should creates Http Response to back client with message `pong N`; _N_ is a quantity of requests from current client; example: `{"action":"pong","content":"pong 4","status":"200 OK"}`.  
-  * Server might have high load from huge number of clients.  
+  * `Client` creates message with text `ping` and sends Http Request to server by POST method; example:`{ "action": "ping"}`.  
+  * `Server` receives request and should creates Http Response to back client with message `pong N`; _N_ is a quantity of requests from current client; example: `{"action":"pong","content":"pong 4","status":"200 OK"}`.  
+  * `Server` might have high load from huge number of clients.  
+  * `Client`: perform requests to server.
+  * `HTTP cookie` is a main opportunity for server to know all clients: new and old. It produces hash code over all cookies (key:value) and this integer value is a key for making a decision.
+```sh
+Example of JSON document:  {"coockie_hash" : 77737217 , "quantity" : 2}
+
+Example of FindAndModify query:  {query: {"coockie_hash" : 77737217} , sort: {"coockie_hash" : 1}, update: {$inc: {"quantity" : 1}}, new: true, upset: true}
+```  
+  * `Ping Pong Server` can handle some URLs:
+    * [http://localhost/author](http://localhost/author) - OK  (POST Method; a little bit information about author)
+    * [http://localhost/handler](http://localhost/handler) - OK (POST Method)
+    * [http://localhost/any_unknown_uri](http://localhost/any_unknown_uri) - BAD (GET or POST Methods)
+  
   
 ## Requirements:
 
@@ -159,7 +171,7 @@ WriteResult({ "nInserted" : 1 })
   
 ##### Maven build project 
   *  Go to the root path `/netty-client-server/` of the project and run:  
-```log
+```sh
 netty-client-server>mvn clean package
 
 ...<cut>...
