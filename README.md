@@ -6,11 +6,11 @@ This is a prototype game. Consist of two parts: client and server. **Client** pe
   
 Rules:  
 
-1) client creates message with text "ping" and sends Http Request to server by POST method.
+1) client creates message with text "ping" and sends Http Request to server by POST method.  
 ```javascript
 { "action": "ping"}
 ```
-2) server receives request and should creates Http Response to back client with message "pong N"; _N_ is a quantity of requests from current client.
+2) server receives request and should creates Http Response to back client with message "pong N"; _N_ is a quantity of requests from current client.  
 ```javascript
 {"action":"pong","content":"pong 4","status":"200 OK"}
 ```

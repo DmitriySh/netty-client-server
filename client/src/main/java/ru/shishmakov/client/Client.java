@@ -40,6 +40,7 @@ public class Client {
     }
 
     private void run() throws InterruptedException {
+        logger.warn("Initialise client ...");
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             final Bootstrap client = new Bootstrap();
@@ -51,13 +52,13 @@ public class Client {
             final FullHttpRequest request = buildFullHttpRequest(json);
 
             final Channel clientChannel = client.connect(host, port).sync().channel();
-            logger.info("Start the client: {}. Listen on local address: {}; remote address: {}",
+            logger.warn("Start the client: {}. Listen on local address: {}; remote address: {}",
                     this.getClass().getSimpleName(), clientChannel.localAddress(), clientChannel.remoteAddress());
             clientChannel.writeAndFlush(request);
             logger.info("Send HTTP request: {} {} {}; content: {}", request.getMethod(), request.getUri(),
                     request.getProtocolVersion(), json);
             clientChannel.closeFuture().sync();
-            logger.info("Server to close the connection: {}", Client.class.getSimpleName());
+            logger.warn("Client to close the connection: {}", Client.class.getSimpleName());
         } finally {
             // shutdown all events
             group.shutdownGracefully();

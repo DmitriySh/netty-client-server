@@ -35,6 +35,7 @@ public class Server {
     }
 
     public void run() throws InterruptedException {
+        logger.warn("Initialise server ...");
         final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         try {
@@ -46,9 +47,9 @@ public class Server {
                     .childHandler(new ServerChannelHandler());
 
             final Channel serverChannel = server.bind(host, port).sync().channel();
-            logger.info("Start the server: {}. Listen on: {}", this.getClass().getSimpleName(), serverChannel.localAddress());
+            logger.warn("Start the server: {}. Listen on: {}", this.getClass().getSimpleName(), serverChannel.localAddress());
             serverChannel.closeFuture().sync();
-            logger.info("Shutdown the server: {}", serverChannel);
+            logger.warn("Shutdown the server: {}", serverChannel);
         } finally {
             // shutdown all events
             bootGroup.shutdownGracefully();

@@ -29,6 +29,7 @@ public class Database {
             synchronized (lock) {
                 result = instance;
                 if (result == null) {
+                    logger.warn("Initialise connection to MongoDB ... ");
                     final String host = config.getString("database.host");
                     final int port = config.getInt("database.port");
                     final String user = config.getString("database.user");
@@ -39,11 +40,14 @@ public class Database {
                             MongoCredential.createMongoCRCredential(user, databaseName, password.toCharArray());
                     final ServerAddress serverAddress = new ServerAddress(host, port);
                     result = new MongoClient(serverAddress, Collections.singletonList(credential));
+                    // testing connection
+                    result.isLocked();
                     final DB db = result.getDB(databaseName);
-                    collection = db.getCollection(databaseName);
+                    final DBCollection tempCollect = db.getCollection(databaseName);
 
-                    logger.info("Connected to MongoDB on {}:{}", host, port);
+                    logger.warn("Connected to MongoDB on {}:{}", host, port);
                     instance = result;
+                    collection = tempCollect;
                 }
             }
         }

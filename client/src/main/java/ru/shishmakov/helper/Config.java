@@ -19,8 +19,8 @@ public class Config extends XMLConfiguration {
 
     private Config() throws IOException, ConfigurationException {
         final URL configResource = this.getClass().getResource(CONFIG_XML);
-        logger.warn("Configuration loaded from {}", configResource);
         this.load(configResource);
+        logger.warn("Configuration loaded from {}", configResource);
     }
 
     public static Config getInstance() throws IOException, ConfigurationException {
@@ -29,6 +29,7 @@ public class Config extends XMLConfiguration {
             synchronized (Config.class) {
                 result = instance;
                 if (result == null) {
+                    logger.warn("Initialise configuration ...");
                     instance = result = new Config();
                 }
             }
