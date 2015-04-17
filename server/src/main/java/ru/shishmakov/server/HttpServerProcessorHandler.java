@@ -30,19 +30,21 @@ public class HttpServerProcessorHandler extends ChannelInboundHandlerAdapter {
             .lookup().lookupClass());
     private static final String HANDLER_URI = "/handler";
     private static final String AUTHOR_URI = "/author";
-
+    /**
+     * Converter Java Object -> JSON, JSON -> Java Object
+     */
     private final Gson gson = new Gson();
 
-//    @Override
-//    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
-//        logger.error("Fail at handler: " + cause.getMessage(), cause);
-//        ctx.close();
-//    }
-//
-//    @Override
-//    public void channelReadComplete(ChannelHandlerContext ctx) {
-//        ctx.flush();
-//    }
+    @Override
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
+        logger.error("Fail at handler: " + cause.getMessage(), cause);
+        ctx.close();
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
 
     /**
      * Main method processes each incoming message
@@ -90,7 +92,6 @@ public class HttpServerProcessorHandler extends ChannelInboundHandlerAdapter {
             case HANDLER_URI: {
                 // pushed to the next channel
                 ctx.fireChannelRead(request);
-//                ResponseUtil.buildResponseHttp200(gson, ctx, "pong", "pong " + 0);
                 break;
             }
             case AUTHOR_URI: {

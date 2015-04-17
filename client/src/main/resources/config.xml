@@ -5,4 +5,7 @@
         <port>80</port>
         <uri>/handler</uri>
     </connect>
+    <cookie>
+        <value>name1=value1; name2=value2</value>
+    </cookie>
 </config>

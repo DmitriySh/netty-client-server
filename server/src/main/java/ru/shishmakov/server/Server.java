@@ -17,6 +17,8 @@ import ru.shishmakov.helper.Database;
 import java.lang.invoke.MethodHandles;
 
 /**
+ * Netty server of game <i>"Ping Pong"</i>
+ *
  * @author Dmitriy Shishmakov
  */
 public class Server {
@@ -33,11 +35,8 @@ public class Server {
     }
 
     public void run() throws InterruptedException {
-        // 1 thread: one by one
-        final NioEventLoopGroup bootGroup = new NioEventLoopGroup(1);
-        // N threads: depends by cores or value of  system property
+        final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
-
         try {
             final ServerBootstrap server = new ServerBootstrap();
             server.group(bootGroup, processGroup)

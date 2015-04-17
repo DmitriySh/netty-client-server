@@ -6,6 +6,7 @@ package ru.shishmakov.entity;
  * @author Dmitriy Shishmakov
  */
 public class Protocol {
+
     private String action;
     private String content;
     private String status;

@@ -18,12 +18,16 @@ import java.lang.invoke.MethodHandles;
 
 
 /**
+ * Netty client for server game of <i>"Ping Pong"</i>
+ *
  * @author Dmitriy Shishmakov
  */
 public class Client {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
+
+    private static Config config;
 
     private final String host;
     private final int port;
@@ -36,7 +40,6 @@ public class Client {
     }
 
     private void run() throws InterruptedException {
-        // N threads: depends by cores or value of  system property
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             final Bootstrap client = new Bootstrap();
@@ -71,9 +74,7 @@ public class Client {
         headers.set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
         headers.set(HttpHeaders.Names.ACCEPT, "application/json");
         headers.set(HttpHeaders.Names.USER_AGENT, "Netty 4.0");
-//        headers.set(HttpHeaders.Names.COOKIE, "id=client12");
-//        headers.set(HttpHeaders.Names.COOKIE, "name2=value2; Expires=Wed, 09 Jun 2021 10:18:14 GMT");
-        headers.set(HttpHeaders.Names.COOKIE, "name=value; name2=value2");
+        headers.set(HttpHeaders.Names.COOKIE, config.getString("cookie.value"));
         headers.set(HttpHeaders.Names.HOST, host);
         headers.set(HttpHeaders.Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()));
         return request;
@@ -81,7 +82,7 @@ public class Client {
 
     public static void main(final String[] args) throws Exception {
         try {
-            final Config config = Config.getInstance();
+            config = Config.getInstance();
             final String host = config.getString("connect.host");
             final int port = config.getInt("connect.port");
             final String uri = config.getString("connect.uri");
