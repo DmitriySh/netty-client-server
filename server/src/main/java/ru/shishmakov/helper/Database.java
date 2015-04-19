@@ -4,10 +4,17 @@ package ru.shishmakov.helper;
 import com.mongodb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shishmakov.config.Config;
+import ru.shishmakov.config.ConfigKey;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 
+/**
+ * Connection to MongoDB.
+ *
+ * @author Dmitriy Shishmakov
+ */
 public class Database {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
@@ -30,11 +37,11 @@ public class Database {
                 result = instance;
                 if (result == null) {
                     logger.warn("Initialise connection to MongoDB ... ");
-                    final String host = config.getString("database.host");
-                    final int port = config.getInt("database.port");
-                    final String user = config.getString("database.user");
-                    final String password = config.getString("database.password");
-                    final String databaseName = config.getString("database.databaseName");
+                    final String host = config.getString(ConfigKey.DATABASE_HOST);
+                    final int port = config.getInt(ConfigKey.DATABASE_PORT);
+                    final String user = config.getString(ConfigKey.DATABASE_USER);
+                    final String password = config.getString(ConfigKey.DATABASE_PASSWORD);
+                    final String databaseName = config.getString(ConfigKey.DATABASE_NAME);
 
                     final MongoCredential credential =
                             MongoCredential.createMongoCRCredential(user, databaseName, password.toCharArray());

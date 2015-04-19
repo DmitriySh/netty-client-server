@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
+/**
+ * @author Dmitriy Shishmakov
+ */
 public class HttpClientProcessorHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles

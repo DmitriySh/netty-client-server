@@ -88,6 +88,7 @@ public class HttpServerProcessorHandler extends ChannelInboundHandlerAdapter {
         if (content.isReadable()) {
             logger.info("client uri: {} data: {}", uri, content.toString(CharsetUtil.UTF_8));
         }
+
         switch (uri) {
             case HANDLER_URI: {
                 // pushed to the next channel
@@ -99,7 +100,7 @@ public class HttpServerProcessorHandler extends ChannelInboundHandlerAdapter {
                 break;
             }
             default: {
-                ResponseUtil.buildResponseHttp400(gson, ctx, "URI");
+                ResponseUtil.buildResponseHttp400(gson, ctx, "uri");
                 break;
             }
         }

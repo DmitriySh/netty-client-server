@@ -11,7 +11,8 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.shishmakov.helper.Config;
+import ru.shishmakov.config.Config;
+import ru.shishmakov.config.ConfigKey;
 import ru.shishmakov.helper.Database;
 
 import java.lang.invoke.MethodHandles;
@@ -65,8 +66,8 @@ public class Server {
         try {
             final Config config = Config.getInstance();
             mongo = Database.getInstance(config);
-            final String host = config.getString("bind.host", "127.0.0.1");
-            final int port = config.getInt("bind.port", 80);
+            final String host = config.getString(ConfigKey.BIND_HOST);
+            final int port = config.getInt(ConfigKey.BIND_PORT);
             new Server(host, port).run();
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);

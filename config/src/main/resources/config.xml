@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
+    <connect>
+        <host>127.0.0.1</host>
+        <port>80</port>
+        <uri>/handler</uri>
+    </connect>
+
+    <cookie>
+        <value>name1=value1; name2=value2</value>
+    </cookie>
+
     <bind>
         <host>127.0.0.1</host>
         <port>80</port>
@@ -10,6 +20,6 @@
         <port>27017</port>
         <user>pingponguser</user>
         <password>pingponguser</password>
-        <databaseName>pingpong</databaseName>
+        <name>pingpong</name>
     </database>
 </config>

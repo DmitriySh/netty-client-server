@@ -12,13 +12,14 @@ import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.shishmakov.helper.Config;
+import ru.shishmakov.config.Config;
+import ru.shishmakov.config.ConfigKey;
 
 import java.lang.invoke.MethodHandles;
 
 
 /**
- * Netty client for server game of <i>"Ping Pong"</i>
+ * Netty client for server game <i>"Ping Pong"</i>
  *
  * @author Dmitriy Shishmakov
  */
@@ -75,7 +76,7 @@ public class Client {
         headers.set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
         headers.set(HttpHeaders.Names.ACCEPT, "application/json");
         headers.set(HttpHeaders.Names.USER_AGENT, "Netty 4.0");
-        headers.set(HttpHeaders.Names.COOKIE, config.getString("cookie.value"));
+        headers.set(HttpHeaders.Names.COOKIE, config.getString(ConfigKey.COOKIE_VALUE));
         headers.set(HttpHeaders.Names.HOST, host);
         headers.set(HttpHeaders.Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()));
         return request;
@@ -84,9 +85,9 @@ public class Client {
     public static void main(final String[] args) throws Exception {
         try {
             config = Config.getInstance();
-            final String host = config.getString("connect.host");
-            final int port = config.getInt("connect.port");
-            final String uri = config.getString("connect.uri");
+            final String host = config.getString(ConfigKey.CONNECT_HOST);
+            final int port = config.getInt(ConfigKey.CONNECT_PORT);
+            final String uri = config.getString(ConfigKey.CONNECT_URI);
             new Client(host, port, uri).run();
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);

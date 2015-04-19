@@ -106,6 +106,9 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
         int hash = buildHash(cookies);
 
         final DBCollection collection = Database.getDBCollection();
+        if (collection == null) {
+            throw new IllegalArgumentException("The database don't have a link with collection for making the query.");
+        }
         // create a finding query
         final BasicDBObject query = new BasicDBObject("coockie_hash", hash);
         // create an ascending query
@@ -139,10 +142,11 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
     private Protocol buildFromJson(final FullHttpRequest request) {
         try {
             final String data = request.content().toString(CharsetUtil.UTF_8);
-            return gson.fromJson(data, Protocol.class);
+            final Protocol protocol = gson.fromJson(data, Protocol.class);
+            return protocol == null ? new Protocol("") : protocol;
         } catch (Exception e) {
             //can't parse: temp solution
-            return new Protocol(null);
+            return new Protocol("");
         }
     }
 
