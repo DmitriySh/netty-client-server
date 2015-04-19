@@ -38,7 +38,7 @@ Example of FindAndModify query:  {query: {"coockie_hash" : 77737217} , sort: {"c
   * Configuration File  
     * MongoDB need a folders (data and log directory) to store its data. By default, it will store in `/data/db/` and `/data/log/`, create those folders manually. MongoDB won't create it for you.
     * Create a file `mongo.config` into `/bin` directory, it’s just a YAML file:  
-```yaml
+```yaml 
 --- #MongoDB configuration file
 net:
    bindIp: 127.0.0.1
@@ -52,18 +52,18 @@ systemLog:
     destination: file
     path: "../log/mongod.log"
     
-```  
-  
+```   
+    
   * Start MongoDB server:  
-```sh
+```sh 
 mongodb/bin>mongod --config ./mongo.config
-```  
-  
+```   
+    
   * Connect to the started MongoDB server:  
 ```sh
 mongodb/bin>mongo
-```  
-  
+```   
+    
   * Project uses db `pingpong` for all actions:
 ```sh
 > use pingpong
@@ -71,8 +71,8 @@ switched to db pingpong
 
 > db
 pingpong
-```  
-  
+```   
+    
   * Creates a user `pingponguser` for the database `pingpong` where the method runs.
 ```sh
 > db.createUser({user: "pingponguser", pwd: "pingponguser", roles: ["readWrite", "dbAdmin"]})
@@ -82,8 +82,8 @@ Successfully added user: { "user" : "pingponguser", "roles" : [ "readWrite", "db
 admin     0.031GB
 local     0.031GB
 pingpong  (empty)
-```    
-  
+```     
+    
   *  Creates first document which structure will be used:
 ```sh
 > db.pingpong.insert({"coockie_hash": 48, "quantity": 0})
@@ -91,9 +91,10 @@ WriteResult({ "nInserted" : 1 })
 
 > db.pingpong.find()
 { "_id" : ObjectId("552fcaadcebf0f9b1ae94ca4"), "coockie_hash" : 48, "coockie_source" : "0", "quantity" : 0 }
-```    
+```   
+    
   *  Creates an ascending index on the field `coockie_hash`
-```sh
+```sh 
 > db.pingpong.createIndex({"coockie_hash": 1}, {"unique": true, "sparse": true})
 
 {
@@ -125,14 +126,14 @@ WriteResult({ "nInserted" : 1 })
         }
 ]
 
-```    
+```     
 
 ---  
   
 ##### Server and Client configuration  
   
-  *  Go to the `Server` configuration file `/netty-client-server/server/src/main/resources/config.xml` to make some changes if you need it:
-```xml
+  *  Go to the `Config` configuration file `/netty-client-server/config/src/main/resources/config.xml` to make some changes if you need it:
+```xml  
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
     <connect>
@@ -140,17 +141,11 @@ WriteResult({ "nInserted" : 1 })
         <port>80</port>
         <uri>/handler</uri>
     </connect>
+
     <cookie>
         <value>name1=value1; name2=value2</value>
     </cookie>
-</config>
 
-```  
-  
-  *  Go to the `Client` configuration file `/netty-client-server/server/src/main/resources/config.xml` to make some changes if you need it:
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<config>
     <bind>
         <host>127.0.0.1</host>
         <port>80</port>
@@ -161,11 +156,12 @@ WriteResult({ "nInserted" : 1 })
         <port>27017</port>
         <user>pingponguser</user>
         <password>pingponguser</password>
-        <databaseName>pingpong</databaseName>
+        <name>pingpong</name>
     </database>
 </config>
 
-```    
+```   
+  
 
 ---  
   
