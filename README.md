@@ -174,17 +174,19 @@ netty-client-server>mvn clean package
 
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Summary:
-[INFO] 
-[INFO] client-server ...................................... SUCCESS [  1.196 s]
-[INFO] client ............................................. SUCCESS [  3.193 s]
-[INFO] server ............................................. SUCCESS [  0.434 s]
+[INFO]
+[INFO] client-server ...................................... SUCCESS [  0.916 s]
+[INFO] config ............................................. SUCCESS [  1.579 s]
+[INFO] client ............................................. SUCCESS [  1.119 s]
+[INFO] server ............................................. SUCCESS [  0.764 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4.957 s
-[INFO] Finished at: 2015-04-17T15:37:52+03:00
-[INFO] Final Memory: 17M/48M
+[INFO] Total time: 4.585 s
+[INFO] Finished at: 2015-04-21T07:44:19+03:00
+[INFO] Final Memory: 19M/46M
 [INFO] ------------------------------------------------------------------------
+
 ```  
    
   *  Run tests. All tests are disabled by default. Was created a separate profile "test-server" for enabling tests into submodule of `Server`.  Go to the root path `/netty-client-server/` of the project and run:  
