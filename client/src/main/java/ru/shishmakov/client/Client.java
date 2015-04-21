@@ -90,7 +90,7 @@ public class Client {
             final String uri = config.getString(ConfigKey.CONNECT_URI);
             new Client(host, port, uri).run();
         } catch (Exception e) {
-            logger.error("The server failure: " + e.getMessage(), e);
+            logger.error("The client failure: " + e.getMessage(), e);
         }
     }
 }

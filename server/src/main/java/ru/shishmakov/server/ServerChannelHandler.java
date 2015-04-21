@@ -15,7 +15,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
  * @author Dmitriy Shishmakov
  * @see Server
  */
-class ServerChannelHandler extends ChannelInitializer<SocketChannel> {
+public class ServerChannelHandler extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(final SocketChannel ch) throws Exception {
         final int countThreads = Runtime.getRuntime().availableProcessors() * 2;

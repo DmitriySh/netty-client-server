@@ -17,11 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.shishmakov.entity.CookieHash;
 import ru.shishmakov.entity.Protocol;
+import ru.shishmakov.helper.CookieUtil;
 import ru.shishmakov.helper.Database;
 import ru.shishmakov.helper.ResponseUtil;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -103,7 +103,7 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
         if (cookies.isEmpty()) {
             return 1;
         }
-        int hash = buildHash(cookies);
+        int hash = CookieUtil.buildHash(cookies);
 
         final DBCollection collection = Database.getDBCollection();
         if (collection == null) {
@@ -128,15 +128,6 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
         final String json = JSON.serialize(dbObject);
         final CookieHash client = gson.fromJson(json, CookieHash.class);
         return client.getQuantity();
-    }
-
-    private int buildHash(final Set<Cookie> cookies) {
-        int hash = 0;
-        for (Cookie cookie : cookies) {
-            hash += Objects.hashCode(cookie.getName());
-            hash += Objects.hashCode(cookie.getValue());
-        }
-        return hash;
     }
 
     private Protocol buildFromJson(final FullHttpRequest request) {
