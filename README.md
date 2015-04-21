@@ -189,7 +189,7 @@ netty-client-server>mvn clean package
 
 ```  
    
-  *  Run tests. All tests are disabled by default. Was created a separate profile "test-server" for enabling tests into submodule of `Server`.  Go to the root path `/netty-client-server/` of the project and run:  
+  *  Build project and run tests. All tests are disabled by default. Was created a separate profile "test-server" for enabling tests into submodule of `Server`.  Go to the root path `/netty-client-server/` of the project and run:  
 ```sh
 netty-client-server>mvn clean package -P test-server  
 
