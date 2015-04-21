@@ -165,8 +165,8 @@ WriteResult({ "nInserted" : 1 })
 
 ---  
   
-##### Maven build project 
-  *  Go to the root path `/netty-client-server/` of the project and run:  
+##### Maven 
+  *  Build project. Go to the root path `/netty-client-server/` of the project and run:  
 ```sh
 netty-client-server>mvn clean package
 
@@ -186,7 +186,13 @@ netty-client-server>mvn clean package
 [INFO] Final Memory: 17M/48M
 [INFO] ------------------------------------------------------------------------
 ```  
-
+   
+  *  Run tests. All tests are disabled by default. Was created a separate profile "test-server" for enabling tests into submodule of `Server`.  Go to the root path `/netty-client-server/` of the project and run:  
+```sh
+netty-client-server>mvn clean package -P test-server
+```  
+  
+   
 ---  
 
 ## Run
