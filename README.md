@@ -191,7 +191,63 @@ netty-client-server>mvn clean package
    
   *  Run tests. All tests are disabled by default. Was created a separate profile "test-server" for enabling tests into submodule of `Server`.  Go to the root path `/netty-client-server/` of the project and run:  
 ```sh
-netty-client-server>mvn clean package -P test-server
+netty-client-server>mvn clean package -P test-server  
+
+... <cut> ...
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running ru.shishmakov.server.TestCookie
+INFO  - TestCookie           - Running test "testHashCode" (TestBase.java:30)
+INFO  - TestCookie           - Cookie 1: name=name1; value=value1 (TestCookie.java:32)
+INFO  - TestCookie           - Cookie 2: name=name2; value=value2 (TestCookie.java:33)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.154 sec - in ru.shishmakov.server.TestCookie
+Running ru.shishmakov.server.TestHttpRequest
+WARN  - Config               - Initialise configuration ... (Config.java:36)
+WARN  - Config               - Configuration loaded from jar:file:/D:/work/github/netty-client-server/config/target/config-1.0-SNAPSHOT.jar!/config.xml (Config.java:27)
+INFO  - TestHttpRequest      - Running test "testNotAllowedMethod" (TestBase.java:30)
+INFO  - HttpServerProcessorHandler - client localAddress: /127.0.0.1:80 (HttpServerProcessorHandler.java:60)
+INFO  - HttpServerProcessorHandler - client remoteAddress: /127.0.0.1:57211 (HttpServerProcessorHandler.java:61)
+INFO  - HttpServerProcessorHandler - client cookie: name1=value1 (HttpServerProcessorHandler.java:63)
+INFO  - HttpServerProcessorHandler - client cookie: name2=value2 (HttpServerProcessorHandler.java:63)
+INFO  - HttpServerProcessorHandler - // ---------------- end client  (HttpServerProcessorHandler.java:67)
+INFO  - TestHttpRequest      - Expected result: {"action":"error","content":"Ping Pong server failure","status":"405 Method Not Allowed"} (TestHttpRequest.java:79)
+INFO  - TestHttpRequest      - Actual result: {"action":"error","content":"Ping Pong server failure","status":"405 Method Not Allowed"} (TestHttpRequest.java:80)
+INFO  - TestHttpRequest      - Running test "testEmptyProtocolBody" (TestBase.java:30)
+INFO  - HttpServerProcessorHandler - client localAddress: /127.0.0.1:80 (HttpServerProcessorHandler.java:60)
+INFO  - HttpServerProcessorHandler - client remoteAddress: /127.0.0.1:57260 (HttpServerProcessorHandler.java:61)
+INFO  - HttpServerProcessorHandler - client cookie: name1=value1 (HttpServerProcessorHandler.java:63)
+INFO  - HttpServerProcessorHandler - client cookie: name2=value2 (HttpServerProcessorHandler.java:63)
+INFO  - HttpServerProcessorHandler - // ---------------- end client  (HttpServerProcessorHandler.java:67)
+INFO  - TestHttpRequest      - Expected result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:102)
+INFO  - TestHttpRequest      - Actual result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:103)
+INFO  - TestHttpRequest      - Running test "testBadProtocolBody" (TestBase.java:30)
+INFO  - HttpServerProcessorHandler - client localAddress: /127.0.0.1:80 (HttpServerProcessorHandler.java:60)
+INFO  - HttpServerProcessorHandler - client remoteAddress: /127.0.0.1:57309 (HttpServerProcessorHandler.java:61)
+INFO  - HttpServerProcessorHandler - client cookie: name1=value1 (HttpServerProcessorHandler.java:63)
+INFO  - HttpServerProcessorHandler - client cookie: name2=value2 (HttpServerProcessorHandler.java:63)
+INFO  - HttpServerProcessorHandler - client uri: /handler data: {"altron":"ping"} (HttpServerProcessorHandler.java:89)
+INFO  - HttpServerProcessorHandler - // ---------------- end client  (HttpServerProcessorHandler.java:67)
+INFO  - TestHttpRequest      - Expected result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:126)
+INFO  - TestHttpRequest      - Actual result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:127)
+INFO  - TestHttpRequest      - Running test "testAuthorRequest" (TestBase.java:30)
+INFO  - HttpServerProcessorHandler - client localAddress: /127.0.0.1:80 (HttpServerProcessorHandler.java:60)
+INFO  - HttpServerProcessorHandler - client remoteAddress: /127.0.0.1:57358 (HttpServerProcessorHandler.java:61)
+INFO  - HttpServerProcessorHandler - client cookie: name1=value1 (HttpServerProcessorHandler.java:63)
+INFO  - HttpServerProcessorHandler - client cookie: name2=value2 (HttpServerProcessorHandler.java:63)
+INFO  - HttpServerProcessorHandler - client uri: /author data: {"action":"ping"} (HttpServerProcessorHandler.java:89)
+INFO  - HttpServerProcessorHandler - // ---------------- end client  (HttpServerProcessorHandler.java:67)
+INFO  - TestHttpRequest      - Expected result: {"action":"author","content":"Dmitriy Shishmakov, https://github.com/DmitriySh","status":"200 OK"} (TestHttpRequest.java:150)
+INFO  - TestHttpRequest      - Actual result: {"action":"author","content":"Dmitriy Shishmakov, https://github.com/DmitriySh","status":"200 OK"} (TestHttpRequest.java:151)
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.666 sec - in ru.shishmakov.server.TestHttpRequest
+
+Results :
+
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+
+... <cut> ...
+
 ```  
   
    
