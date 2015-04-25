@@ -16,7 +16,7 @@
     </bind>
 
     <database>
-        <host>127.0.0.1</host>
+        <host>192.168.157.136</host>
         <port>27017</port>
         <user>pingponguser</user>
         <password>pingponguser</password>
