@@ -69,7 +69,6 @@ public class HttpServerProcessorHandler extends ChannelInboundHandlerAdapter {
             case HANDLER_URI:
                 // pushed to the next channel
                 ctx.fireChannelRead(httpRequest);
-                ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
                 break;
             case AUTHOR_URI:
                 ResponseUtil.writeAuthorResponseHttp200(gson, ctx);
@@ -80,10 +79,10 @@ public class HttpServerProcessorHandler extends ChannelInboundHandlerAdapter {
                 ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
                 break;
         }
-        logger.info("// ---------------- end client ");
     }
 
     private static void writeLogClientInfo(final ChannelHandlerContext ctx, final FullHttpRequest httpRequest) {
+        logger.info("// ---------------- start client ");
         logger.debug("client localAddress: {}", ctx.channel().localAddress());
         logger.debug("client remoteAddress: {}", ctx.channel().remoteAddress());
         final ByteBuf content = httpRequest.content();

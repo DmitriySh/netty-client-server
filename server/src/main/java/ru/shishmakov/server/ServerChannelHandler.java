@@ -26,9 +26,6 @@ public class ServerChannelHandler extends ChannelInitializer<SocketChannel> {
                 .addLast("aggregator", new HttpObjectAggregator(1048576))
                 .addLast("encoder", new HttpResponseEncoder())
                 .addLast("processor", new HttpServerProcessorHandler())
-                        // can't receive HTTP Response to client with EventExecutorGroup
-//                .addAfter(workers, "processor", "database", new HttpServerDatabaseHandler());
-                .addAfter("processor", "database", new HttpServerDatabaseHandler());
-
+                .addAfter(workers, "processor", "database", new HttpServerDatabaseHandler());
     }
 }

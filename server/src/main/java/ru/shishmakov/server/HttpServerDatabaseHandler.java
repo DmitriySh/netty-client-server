@@ -74,7 +74,6 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
         if (!(msg instanceof FullHttpRequest)) {
             return;
         }
-
         final FullHttpRequest request = (FullHttpRequest) msg;
         final Protocol protocol = buildFromJson(request);
         if (!PING.equalsIgnoreCase(protocol.getAction())) {
