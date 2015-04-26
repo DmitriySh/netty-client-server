@@ -11,7 +11,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.Cookie;
+import io.netty.handler.codec.http.CookieDecoder;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import ru.shishmakov.helper.Database;
 import ru.shishmakov.helper.ResponseUtil;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -68,16 +71,20 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-        if (msg instanceof FullHttpRequest) {
-            final Protocol protocol = buildFromJson((FullHttpRequest) msg);
-            if (PING.equalsIgnoreCase(protocol.getAction())) {
-                final long quantity = findPongQuantity((FullHttpRequest) msg);
-                ResponseUtil.buildResponseHttp200(gson, ctx, PONG, PONG + " " + quantity);
-            } else {
-                ResponseUtil.buildResponseHttp400(gson, ctx, "protocol");
-            }
+        if (!(msg instanceof FullHttpRequest)) {
+            return;
+        }
+
+        final FullHttpRequest request = (FullHttpRequest) msg;
+        final Protocol protocol = buildFromJson(request);
+        if (!PING.equalsIgnoreCase(protocol.getAction())) {
+            ResponseUtil.writeResponseHttp400(gson, ctx, "protocol");
             ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
         }
+
+        final long quantity = findPongQuantity(request);
+        ResponseUtil.writeResponseHttp200(gson, ctx, PONG, PONG + " " + quantity);
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
     }
 
     /**
@@ -99,7 +106,7 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
      * @return quantity of requests from current client
      */
     private long findPongQuantity(final FullHttpRequest request) {
-        final Set<Cookie> cookies = ResponseUtil.getCookie(request);
+        final Set<Cookie> cookies = getCookie(request);
         if (cookies.isEmpty()) {
             return 1;
         }
@@ -141,5 +148,11 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-
+    private static Set<Cookie> getCookie(final FullHttpRequest request) {
+        final String cookieHeader = request.headers().get(HttpHeaders.Names.COOKIE);
+        if (cookieHeader == null || cookieHeader.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return CookieDecoder.decode(cookieHeader);
+    }
 }

@@ -7,7 +7,6 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
-import io.netty.handler.codec.http.Cookie;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.util.CharsetUtil;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import ru.shishmakov.helper.ResponseUtil;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Set;
 
 /**
  * Class parses the HTTP Request which was sent to the server.
@@ -47,7 +45,8 @@ public class HttpServerProcessorHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * Main method processes each incoming message
+     * Handle the HttpRequest from client.
+     * Push the request to the next channel or might to build a new HttpResponse and send to client.
      *
      * @param ctx instance to interact with {@link ChannelPipeline} and other handlers
      * @param msg the message to handle
@@ -55,54 +54,43 @@ public class HttpServerProcessorHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-        if (msg instanceof FullHttpRequest) {
-            final Set<Cookie> cookies = ResponseUtil.getCookie((FullHttpRequest) msg);
-            logger.info("client localAddress: {}", ctx.channel().localAddress());
-            logger.info("client remoteAddress: {}", ctx.channel().remoteAddress());
-            for (Cookie cookie : cookies) {
-                logger.info("client cookie: {}", cookie);
-            }
-            handleHttpRequest(ctx, (FullHttpRequest) msg);
+        if (!(msg instanceof FullHttpRequest)) {
+            return;
+        }
+        final FullHttpRequest httpRequest = (FullHttpRequest) msg;
+        if (!HttpMethod.POST.equals((httpRequest).getMethod())) {
+            ResponseUtil.writeResponseHttp405(gson, ctx);
             ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
-            logger.info("// ---------------- end client ");
-        }
-    }
-
-    /**
-     * Handle the HttpRequest from client. Build a new HttpResponse and send to client.
-     *
-     * @param ctx     instance to interact with {@link ChannelPipeline} and other handlers
-     * @param request instance of {@link FullHttpRequest}
-     */
-    private void handleHttpRequest(final ChannelHandlerContext ctx, final FullHttpRequest request) {
-        if (HttpMethod.POST.equals(request.getMethod())) {
-            processPost(ctx, request);
-        } else {
-            ResponseUtil.buildResponseHttp405(gson, ctx);
-        }
-    }
-
-    private void processPost(final ChannelHandlerContext ctx, final FullHttpRequest request) {
-        ByteBuf content = request.content();
-        final String uri = request.getUri();
-        if (content.isReadable()) {
-            logger.info("client uri: {} data: {}", uri, content.toString(CharsetUtil.UTF_8));
+            return;
         }
 
-        switch (uri) {
-            case HANDLER_URI: {
+        writeLogClientInfo(ctx, httpRequest);
+        switch (httpRequest.getUri()) {
+            case HANDLER_URI:
                 // pushed to the next channel
-                ctx.fireChannelRead(request);
+                ctx.fireChannelRead(httpRequest);
+                ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
                 break;
-            }
-            case AUTHOR_URI: {
-                ResponseUtil.buildAuthorResponseHttp200(gson, ctx);
+            case AUTHOR_URI:
+                ResponseUtil.writeAuthorResponseHttp200(gson, ctx);
+                ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
                 break;
-            }
-            default: {
-                ResponseUtil.buildResponseHttp400(gson, ctx, "uri");
+            default:
+                ResponseUtil.writeResponseHttp400(gson, ctx, "uri");
+                ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
                 break;
-            }
+        }
+        logger.info("// ---------------- end client ");
+    }
+
+    private static void writeLogClientInfo(final ChannelHandlerContext ctx, final FullHttpRequest httpRequest) {
+        logger.debug("client localAddress: {}", ctx.channel().localAddress());
+        logger.debug("client remoteAddress: {}", ctx.channel().remoteAddress());
+        final ByteBuf content = httpRequest.content();
+        final String uri = httpRequest.getUri();
+        if (content.isReadable()) {
+            final String data = String.valueOf(content.toString(CharsetUtil.UTF_8));
+            logger.info("client uri: {} data: {}", uri, data);
         }
     }
 
