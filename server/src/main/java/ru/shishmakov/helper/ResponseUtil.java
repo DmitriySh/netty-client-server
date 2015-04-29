@@ -18,51 +18,51 @@ public final class ResponseUtil {
     private ResponseUtil() {
     }
 
-    public static void writeResponseHttp400(final Gson gson, final ChannelHandlerContext ctx, final String content) {
+    public static FullHttpResponse buildResponseHttp400(final Gson gson, final ChannelHandlerContext ctx, final String content) {
         final HttpResponseStatus status = HttpResponseStatus.BAD_REQUEST;
         final Protocol protocol = new Protocol("error");
         protocol.setContent("Ping Pong server can not parse " + content + " of the request");
         protocol.setStatus(String.valueOf(status));
         final String json = gson.toJson(protocol);
-        writeHttpResponse(ctx, json, status);
+        return buildHttpResponse(json, status);
     }
 
-    public static void writeAuthorResponseHttp200(final Gson gson, final ChannelHandlerContext ctx) {
+    public static FullHttpResponse buildAuthorResponseHttp200(final Gson gson, final ChannelHandlerContext ctx) {
         final HttpResponseStatus status = HttpResponseStatus.OK;
         final Protocol protocol = new Protocol("author");
         protocol.setContent("Dmitriy Shishmakov, https://github.com/DmitriySh");
         protocol.setStatus(String.valueOf(status));
         final String json = gson.toJson(protocol);
-        writeHttpResponse(ctx, json, status);
+        return buildHttpResponse(json, status);
     }
 
-    public static void writeResponseHttp200(final Gson gson, final ChannelHandlerContext ctx,
-                                            final String pong, final String content) {
+    public static FullHttpResponse buildResponseHttp200(final Gson gson, final ChannelHandlerContext ctx,
+                                                        final String pong, final String content) {
         final HttpResponseStatus status = HttpResponseStatus.OK;
         final Protocol protocol = new Protocol(pong);
         protocol.setContent(content);
         protocol.setStatus(String.valueOf(status));
         final String json = gson.toJson(protocol);
-        writeHttpResponse(ctx, json, status);
+        return buildHttpResponse(json, status);
     }
 
-    public static void writeResponseHttp405(final Gson gson, final ChannelHandlerContext ctx) {
+    public static FullHttpResponse buildResponseHttp405(final Gson gson, final ChannelHandlerContext ctx) {
         final HttpResponseStatus status = HttpResponseStatus.METHOD_NOT_ALLOWED;
         final Protocol protocol = new Protocol("error");
         protocol.setContent("Ping Pong server failure");
         protocol.setStatus(String.valueOf(status));
         final String json = gson.toJson(protocol);
-        writeHttpResponse(ctx, json, status);
+        return buildHttpResponse(json, status);
     }
 
-    private static void writeHttpResponse(final ChannelHandlerContext ctx, final String data, final HttpResponseStatus status) {
+    private static FullHttpResponse buildHttpResponse(final String data, final HttpResponseStatus status) {
         final ByteBuf content = Unpooled.copiedBuffer(data, CharsetUtil.UTF_8);
         final FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, content);
         final HttpHeaders headers = response.headers();
         headers.set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
         headers.set(HttpHeaders.Names.USER_AGENT, "Netty 4.0");
         headers.set(HttpHeaders.Names.CONTENT_LENGTH, content.readableBytes());
-        ctx.write(response);
+        return response;
     }
 
 }

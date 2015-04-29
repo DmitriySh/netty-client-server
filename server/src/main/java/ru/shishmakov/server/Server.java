@@ -45,7 +45,7 @@ public class Server {
                     .option(ChannelOption.SO_REUSEADDR, true)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new ServerChannelHandler());
+                    .childHandler(new ChannelPipelineInitializer());
 
             final Channel serverChannel = server.bind(host, port).sync().channel();
             logger.warn("Start the server: {}. Listen on: {}", this.getClass().getSimpleName(), serverChannel.localAddress());

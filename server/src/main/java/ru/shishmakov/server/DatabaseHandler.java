@@ -5,36 +5,29 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
-import io.netty.handler.codec.http.Cookie;
-import io.netty.handler.codec.http.CookieDecoder;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.shishmakov.entity.CookieHash;
 import ru.shishmakov.entity.Protocol;
-import ru.shishmakov.helper.CookieUtil;
-import ru.shishmakov.helper.Database;
-import ru.shishmakov.helper.ResponseUtil;
+import ru.shishmakov.helper.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.Set;
 
 /**
- * Class process the HTTP Request which was sent to the server.
- * He is seeking the number of received messages in database. Protocol  "ping".
+ * Class processes the HTTP Request which was sent to the server.
+ * It is seeking the number of received messages in database. Protocol  "ping".
  *
  * @author Dmitriy Shishmakov
- * @see ServerChannelHandler
+ * @see ChannelPipelineInitializer
  */
-public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
+public class DatabaseHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
@@ -50,6 +43,14 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
      * Converter Java Object -> JSON, JSON -> Java Object
      */
     private final Gson gson = new Gson();
+
+    private static Set<Cookie> getCookie(final FullHttpRequest request) {
+        final String cookieHeader = request.headers().get(HttpHeaders.Names.COOKIE);
+        if (cookieHeader == null || cookieHeader.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return CookieDecoder.decode(cookieHeader);
+    }
 
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
@@ -71,19 +72,23 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-        if (!(msg instanceof FullHttpRequest)) {
+        if (!(msg instanceof DatabaseWorker)) {
             return;
         }
-        final FullHttpRequest request = (FullHttpRequest) msg;
+        @SuppressWarnings("unchecked")
+        final DatabaseWorker<FullHttpRequest> worker = (DatabaseWorker<FullHttpRequest>) msg;
+        final FullHttpRequest request = worker.getWorker();
         final Protocol protocol = buildFromJson(request);
         if (!PING.equalsIgnoreCase(protocol.getAction())) {
-            ResponseUtil.writeResponseHttp400(gson, ctx, "protocol");
-            ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+            final FullHttpResponse response = ResponseUtil.buildResponseHttp400(gson, ctx, "protocol");
+            ctx.fireChannelRead(new ResponseWorker<>(response));
+            return;
         }
 
         final long quantity = findPongQuantity(request);
-        ResponseUtil.writeResponseHttp200(gson, ctx, PONG, PONG + " " + quantity);
-        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+        final FullHttpResponse response = ResponseUtil.buildResponseHttp200(gson, ctx, PONG, PONG + " " + quantity);
+        // pushed to the next channel
+        ctx.fireChannelRead(new ResponseWorker<>(response));
     }
 
     /**
@@ -145,13 +150,5 @@ public class HttpServerDatabaseHandler extends ChannelInboundHandlerAdapter {
             //can't parse: temp solution
             return new Protocol("");
         }
-    }
-
-    private static Set<Cookie> getCookie(final FullHttpRequest request) {
-        final String cookieHeader = request.headers().get(HttpHeaders.Names.COOKIE);
-        if (cookieHeader == null || cookieHeader.isEmpty()) {
-            return Collections.emptySet();
-        }
-        return CookieDecoder.decode(cookieHeader);
     }
 }

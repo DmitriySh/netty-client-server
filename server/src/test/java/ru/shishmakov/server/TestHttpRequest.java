@@ -61,7 +61,7 @@ public class TestHttpRequest extends TestBase {
      * Test with illegal type of method into HTTP Request.
      */
     @Test
-    public void testNotAllowedMethod() {
+    public void testHttp405NotAllowedMethod() {
         final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         final String json = "{\"action\":\"ping\"}";
@@ -85,7 +85,7 @@ public class TestHttpRequest extends TestBase {
      * Test with empty body into HTTP Request.
      */
     @Test
-    public void testEmptyProtocolBody() {
+    public void testHttp400EmptyProtocolBody() {
         final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         final ByteBuf content = Unpooled.buffer(0);
@@ -108,7 +108,7 @@ public class TestHttpRequest extends TestBase {
      * Test with defects into body protocol of HTTP Request.
      */
     @Test
-    public void testBadProtocolBody() {
+    public void testHttp400BadProtocolBody() {
         final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         final String json = "{\"altron\":\"ping\"}";
@@ -132,7 +132,7 @@ public class TestHttpRequest extends TestBase {
      * Test with URI into HTTP Request for receive information about author of project.
      */
     @Test
-    public void testAuthorRequest() {
+    public void testHttp200AuthorRequest() {
         final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         final String json = "{\"action\":\"ping\"}";
@@ -161,7 +161,7 @@ public class TestHttpRequest extends TestBase {
                 .option(ChannelOption.SO_REUSEADDR, true)
                 .channel(NioServerSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new ServerChannelHandler());
+                .childHandler(new ChannelPipelineInitializer());
         return server.bind(host, port);
     }
 

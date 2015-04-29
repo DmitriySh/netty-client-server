@@ -15,7 +15,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
  * @author Dmitriy Shishmakov
  * @see Server
  */
-public class ServerChannelHandler extends ChannelInitializer<SocketChannel> {
+public class ChannelPipelineInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(final SocketChannel ch) throws Exception {
         final int countThreads = Runtime.getRuntime().availableProcessors() * 2;
@@ -25,7 +25,8 @@ public class ServerChannelHandler extends ChannelInitializer<SocketChannel> {
                 .addLast("decoder", new HttpRequestDecoder())
                 .addLast("aggregator", new HttpObjectAggregator(1048576))
                 .addLast("encoder", new HttpResponseEncoder())
-                .addLast("processor", new HttpServerProcessorHandler())
-                .addAfter(workers, "processor", "database", new HttpServerDatabaseHandler());
+                .addLast("processor", new RequestProcessor())
+                .addAfter(workers, "processor", "database", new DatabaseHandler())
+                .addAfter("database", "sender", new ResponseSender());
     }
 }
