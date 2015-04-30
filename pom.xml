@@ -96,6 +96,18 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>4.1.6.RELEASE</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-mongodb</artifactId>
+                <version>1.7.0.RELEASE</version>
+            </dependency>
+
+            <dependency>
                 <groupId>ru.shishmakov.app</groupId>
                 <artifactId>config</artifactId>
                 <version>${project.version}</version>

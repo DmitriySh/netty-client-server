@@ -1,13 +1,15 @@
 package ru.shishmakov.helper;
 
-public class ResponseWorker<T> {
-    private final T worker;
+import io.netty.handler.codec.http.FullHttpResponse;
 
-    public ResponseWorker(T worker) {
+public class ResponseWorker {
+    private final FullHttpResponse worker;
+
+    public ResponseWorker(FullHttpResponse worker) {
         this.worker = worker;
     }
 
-    public T getWorker() {
+    public FullHttpResponse getWorker() {
         return worker;
     }
 }

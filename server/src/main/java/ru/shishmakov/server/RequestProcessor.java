@@ -81,7 +81,7 @@ public class RequestProcessor extends ChannelInboundHandlerAdapter {
         switch (httpRequest.getUri()) {
             case HANDLER_URI: {
                 // pushed to the next channel
-                ctx.fireChannelRead(new DatabaseWorker<>(httpRequest));
+                ctx.fireChannelRead(new DatabaseWorker(httpRequest));
                 break;
             }
             case AUTHOR_URI: {
@@ -105,7 +105,7 @@ public class RequestProcessor extends ChannelInboundHandlerAdapter {
      */
     private void fireResponseChannel(final ChannelHandlerContext ctx, final FullHttpResponse response) {
         final ChannelHandlerContext context = ctx.pipeline().context(DatabaseHandler.class);
-        context.fireChannelRead(new ResponseWorker<>(response));
+        context.fireChannelRead(new ResponseWorker(response));
     }
 
 }

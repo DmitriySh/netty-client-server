@@ -1,22 +1,21 @@
 package ru.shishmakov.entity;
 
+import com.google.gson.annotations.SerializedName;
+import org.bson.types.ObjectId;
+
 /**
  * The structure of document into database for each client.
  *
  * @author Dmitriy Shishmakov
  */
-public class CookieHash {
+public class Client {
 
-    private Object _id;
-    private int hash;
+    @SerializedName("_id")
+    private ObjectId clientId;
     private long quantity;
 
-    public Object get_id() {
-        return _id;
-    }
-
-    public int getHash() {
-        return hash;
+    public ObjectId getClientId() {
+        return clientId;
     }
 
     public long getQuantity() {

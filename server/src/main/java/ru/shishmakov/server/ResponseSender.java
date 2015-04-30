@@ -41,8 +41,7 @@ public class ResponseSender extends ChannelInboundHandlerAdapter {
         if (!(msg instanceof ResponseWorker)) {
             return;
         }
-        @SuppressWarnings("unchecked")
-        final ResponseWorker<FullHttpResponse> worker = (ResponseWorker<FullHttpResponse>) msg;
+        final ResponseWorker worker = (ResponseWorker) msg;
         final FullHttpResponse response = worker.getWorker();
         ctx.write(response);
         ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);

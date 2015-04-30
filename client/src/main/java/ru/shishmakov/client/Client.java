@@ -49,7 +49,7 @@ public class Client {
                     .channel(NioSocketChannel.class)
                     .handler(new ClientChannelHandler());
 
-            final String json = "{\"action\":\"ping\"}";
+            final String json = "{\"_id\":\"ObjectId(\"552fcaadcebf0f7b1ae94ca4\")\", \"action\":\"ping\"}";
             final FullHttpRequest request = buildFullHttpRequest(json);
 
             final Channel clientChannel = client.connect(host, port).sync().channel();

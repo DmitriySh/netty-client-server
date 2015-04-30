@@ -8,17 +8,20 @@ import com.mongodb.util.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.util.CharsetUtil;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.shishmakov.entity.CookieHash;
+import ru.shishmakov.entity.Client;
 import ru.shishmakov.entity.Protocol;
-import ru.shishmakov.helper.*;
+import ru.shishmakov.helper.Database;
+import ru.shishmakov.helper.DatabaseWorker;
+import ru.shishmakov.helper.ResponseUtil;
+import ru.shishmakov.helper.ResponseWorker;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * Class processes the HTTP Request which was sent to the server.
@@ -44,14 +47,6 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
      */
     private final Gson gson = new Gson();
 
-    private static Set<Cookie> getCookie(final FullHttpRequest request) {
-        final String cookieHeader = request.headers().get(HttpHeaders.Names.COOKIE);
-        if (cookieHeader == null || cookieHeader.isEmpty()) {
-            return Collections.emptySet();
-        }
-        return CookieDecoder.decode(cookieHeader);
-    }
-
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
         logger.error("Fail at handler: " + cause.getMessage(), cause);
@@ -75,55 +70,60 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
         if (!(msg instanceof DatabaseWorker)) {
             return;
         }
-        @SuppressWarnings("unchecked")
-        final DatabaseWorker<FullHttpRequest> worker = (DatabaseWorker<FullHttpRequest>) msg;
+        final DatabaseWorker worker = (DatabaseWorker) msg;
         final FullHttpRequest request = worker.getWorker();
         final Protocol protocol = buildFromJson(request);
         if (!PING.equalsIgnoreCase(protocol.getAction())) {
             final FullHttpResponse response = ResponseUtil.buildResponseHttp400(gson, ctx, "protocol");
-            ctx.fireChannelRead(new ResponseWorker<>(response));
+            ctx.fireChannelRead(new ResponseWorker(response));
             return;
         }
 
-        final long quantity = findPongQuantity(request);
+        final Client client = findClient(protocol);
+        final long quantity = client.getQuantity();
         final FullHttpResponse response = ResponseUtil.buildResponseHttp200(gson, ctx, PONG, PONG + " " + quantity);
         // pushed to the next channel
-        ctx.fireChannelRead(new ResponseWorker<>(response));
+        ctx.fireChannelRead(new ResponseWorker(response));
     }
 
     /**
      * The main method of the server <i>"Ping Pong"</i>.
-     * HTTP cookie is a main opportunity for server to know all clients: new and old.
-     * It produces hash code over all cookies (key:value) and this integer value is a key for making a decision.
+     * Client ID is a main opportunity for server to know all clients: new and old.
+     * The type is an {@link ObjectId} defines unique of document into Mongo DB.
      * <p>
      * <b>Example of JSON document: </b><br/>
-     * {@code {"coockie_hash" : 77737217 , "quantity" : 2}}
+     * {@code {"_id" : ObjectId("552fcaadcebf0f9b1ae94ca4") , "quantity" : 2}}
      * <p>
      * <b>Example of FindAndModify query: </b> <br/>
      * {@code
-     * {query: {"coockie_hash" : 77737217} ,
-     * sort: {"coockie_hash" : 1},
+     * {query: {"_id" : ObjectId("552fcaadcebf0f9b1ae94ca4")} ,
+     * sort: {"_id" : 1},
      * update: {$inc: {"quantity" : 1}},
      * new: true, upset: true}}
      *
-     * @param request instance of {@link FullHttpRequest}
+     * @param protocol instance of {@link Protocol}
      * @return quantity of requests from current client
      */
-    private long findPongQuantity(final FullHttpRequest request) {
-        final Set<Cookie> cookies = getCookie(request);
-        if (cookies.isEmpty()) {
-            return 1;
-        }
-        int hash = CookieUtil.buildHash(cookies);
-
+    private Client findClient(final Protocol protocol) {
         final DBCollection collection = Database.getDBCollection();
         if (collection == null) {
             throw new IllegalArgumentException("The database don't have a link with collection for making the query.");
         }
+
+        final ObjectId id = protocol.getClientId();
+        if (id == null) {
+            // create a inserting query
+            final BasicDBObject query = new BasicDBObject("quantity", 1);
+            collection.insert(query);
+            String json = JSON.serialize(query);
+            return gson.fromJson(json, Client.class);
+        }
+
+
         // create a finding query
-        final BasicDBObject query = new BasicDBObject("coockie_hash", hash);
+        final BasicDBObject query = new BasicDBObject("_id", id);
         // create an ascending query
-        final DBObject sortQuery = new BasicDBObject("coockie_hash", 1);
+        final DBObject sortQuery = new BasicDBObject("_id", 1);
         // create an increment query
         final DBObject updateQuery = new BasicDBObject("$inc", new BasicDBObject("quantity", 1));
         // remove the document specified in the query
@@ -137,18 +137,17 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
         final DBObject dbObject = collection.findAndModify(query, fields, sortQuery, remove, updateQuery, returnNew, upsert);
 
         final String json = JSON.serialize(dbObject);
-        final CookieHash client = gson.fromJson(json, CookieHash.class);
-        return client.getQuantity();
+        return gson.fromJson(json, Client.class);
     }
 
     private Protocol buildFromJson(final FullHttpRequest request) {
         try {
             final String data = request.content().toString(CharsetUtil.UTF_8);
             final Protocol protocol = gson.fromJson(data, Protocol.class);
-            return protocol == null ? new Protocol("") : protocol;
+            return protocol == null ? new Protocol(null) : protocol;
         } catch (Exception e) {
             //can't parse: temp solution
-            return new Protocol("");
+            return new Protocol(null);
         }
     }
 }

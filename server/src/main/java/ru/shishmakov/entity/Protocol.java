@@ -1,5 +1,8 @@
 package ru.shishmakov.entity;
 
+import com.google.gson.annotations.SerializedName;
+import org.bson.types.ObjectId;
+
 /**
  * The main protocol of transfer between client and server.
  *
@@ -7,12 +10,23 @@ package ru.shishmakov.entity;
  */
 public class Protocol {
 
+    @SerializedName("client_id")
+    private ObjectId clientId;
     private String action;
     private String content;
     private String status;
 
     public Protocol(String action) {
+        this.clientId = clientId;
         this.action = action;
+    }
+
+    public ObjectId getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(ObjectId clientId) {
+        this.clientId = clientId;
     }
 
     public String getAction() {
@@ -41,7 +55,20 @@ public class Protocol {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("{\"action\":").append(action).append(", \"content\":").
-                append(content).append(", \"status\":").append(status).append("\"}").toString();
+        StringBuilder builder = new StringBuilder("{\"");
+        if(clientId != null){
+            builder.append("client_id\":").append(clientId);
+        }
+        if(action != null){
+            builder.append(", \"action\":").append(action);
+        }
+        if(content != null){
+            builder.
+                    append(", \"content\":").append(content);
+        }
+        if (status != null){
+            builder.append(", \"status\":").append(status);
+        }
+        return builder.append("\"}").toString();
     }
 }
