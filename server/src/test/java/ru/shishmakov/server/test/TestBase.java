@@ -1,4 +1,4 @@
-package ru.shishmakov.server;
+package ru.shishmakov.server.test;
 
 import org.junit.Before;
 import org.junit.Rule;

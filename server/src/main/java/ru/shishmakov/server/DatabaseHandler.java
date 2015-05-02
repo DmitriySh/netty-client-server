@@ -1,16 +1,13 @@
 package ru.shishmakov.server;
 
 import com.google.gson.Gson;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
+import com.mongodb.*;
 import com.mongodb.util.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.util.CharsetUtil;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +19,8 @@ import ru.shishmakov.helper.ResponseUtil;
 import ru.shishmakov.helper.ResponseWorker;
 
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 /**
  * Class processes the HTTP Request which was sent to the server.
@@ -70,18 +69,17 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
         if (!(msg instanceof DatabaseWorker)) {
             return;
         }
-        final DatabaseWorker worker = (DatabaseWorker) msg;
-        final FullHttpRequest request = worker.getWorker();
+        final FullHttpRequest request = ((DatabaseWorker) msg).getWorker();
         final Protocol protocol = buildFromJson(request);
         if (!PING.equalsIgnoreCase(protocol.getAction())) {
-            final FullHttpResponse response = ResponseUtil.buildResponseHttp400(gson, ctx, "protocol");
+            final FullHttpResponse response = ResponseUtil.buildResponseHttp400("protocol");
+            // pushed to the next channel
             ctx.fireChannelRead(new ResponseWorker(response));
             return;
         }
 
         final Client client = findClient(protocol);
-        final long quantity = client.getQuantity();
-        final FullHttpResponse response = ResponseUtil.buildResponseHttp200(gson, ctx, PONG, PONG + " " + quantity);
+        final FullHttpResponse response = ResponseUtil.buildResponseHttp200(PONG, client);
         // pushed to the next channel
         ctx.fireChannelRead(new ResponseWorker(response));
     }
@@ -110,20 +108,20 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
             throw new IllegalArgumentException("The database don't have a link with collection for making the query.");
         }
 
-        final ObjectId id = protocol.getClientId();
-        if (id == null) {
-            // create a inserting query
-            final BasicDBObject query = new BasicDBObject("quantity", 1);
-            collection.insert(query);
-            String json = JSON.serialize(query);
+        final Object sessionId = protocol.getSessionid();
+        if (sessionId == null) {
+            // registration a new client
+            final DBObject data = QueryBuilder.start("sessionid").is(UUID.randomUUID()).and("quantity").is(1).get();
+            final WriteResult result = collection.insert(data);
+            final String json = JSON.serialize(data);
             return gson.fromJson(json, Client.class);
         }
 
 
         // create a finding query
-        final BasicDBObject query = new BasicDBObject("_id", id);
+        final DBObject query = QueryBuilder.start("sessionid").is(UUID.fromString(sessionId.toString())).get();
         // create an ascending query
-        final DBObject sortQuery = new BasicDBObject("_id", 1);
+        final DBObject sortQuery = new BasicDBObject("sessionid", 1);
         // create an increment query
         final DBObject updateQuery = new BasicDBObject("$inc", new BasicDBObject("quantity", 1));
         // remove the document specified in the query
@@ -142,7 +140,7 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
 
     private Protocol buildFromJson(final FullHttpRequest request) {
         try {
-            final String data = request.content().toString(CharsetUtil.UTF_8);
+            final String data = request.content().toString(StandardCharsets.UTF_8);
             final Protocol protocol = gson.fromJson(data, Protocol.class);
             return protocol == null ? new Protocol(null) : protocol;
         } catch (Exception e) {

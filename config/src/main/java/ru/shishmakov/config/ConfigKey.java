@@ -21,5 +21,5 @@ public final class ConfigKey {
     public static final String CONNECT_HOST = "connect.host";
     public static final String CONNECT_PORT = "connect.port";
     public static final String CONNECT_URI = "connect.uri";
-    public static final String COOKIE_VALUE = "cookie.value";
+    public static final String SESSION_ID = "session.id";
 }

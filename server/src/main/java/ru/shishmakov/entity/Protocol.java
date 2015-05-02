@@ -1,7 +1,6 @@
 package ru.shishmakov.entity;
 
-import com.google.gson.annotations.SerializedName;
-import org.bson.types.ObjectId;
+import com.google.gson.JsonObject;
 
 /**
  * The main protocol of transfer between client and server.
@@ -10,23 +9,21 @@ import org.bson.types.ObjectId;
  */
 public class Protocol {
 
-    @SerializedName("client_id")
-    private ObjectId clientId;
+    private Object sessionid;
     private String action;
     private String content;
     private String status;
 
     public Protocol(String action) {
-        this.clientId = clientId;
         this.action = action;
     }
 
-    public ObjectId getClientId() {
-        return clientId;
+    public Object getSessionid() {
+        return sessionid;
     }
 
-    public void setClientId(ObjectId clientId) {
-        this.clientId = clientId;
+    public void setSessionid(Object sessionid) {
+        this.sessionid = sessionid;
     }
 
     public String getAction() {
@@ -55,20 +52,19 @@ public class Protocol {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("{\"");
-        if(clientId != null){
-            builder.append("client_id\":").append(clientId);
+        final JsonObject jsonObject = new JsonObject();
+        if (action != null) {
+            jsonObject.addProperty("action", action);
         }
-        if(action != null){
-            builder.append(", \"action\":").append(action);
+        if (content != null) {
+            jsonObject.addProperty("content", content);
         }
-        if(content != null){
-            builder.
-                    append(", \"content\":").append(content);
+        if (sessionid != null) {
+            jsonObject.addProperty("sessionid", sessionid.toString());
         }
-        if (status != null){
-            builder.append(", \"status\":").append(status);
+        if (status != null) {
+            jsonObject.addProperty("status", status);
         }
-        return builder.append("\"}").toString();
+        return jsonObject.toString();
     }
 }

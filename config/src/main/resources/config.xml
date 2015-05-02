@@ -6,9 +6,9 @@
         <uri>/handler</uri>
     </connect>
 
-    <cookie>
-        <value>name1=value1; name2=value2</value>
-    </cookie>
+    <session>
+        <id>8b939bb8-1faa-4d62-8b42-43d63774e1d0</id>
+    </session>
 
     <bind>
         <host>127.0.0.1</host>

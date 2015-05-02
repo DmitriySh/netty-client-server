@@ -1,4 +1,4 @@
-package ru.shishmakov.server;
+package ru.shishmakov.server.test;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
@@ -12,12 +12,14 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.shishmakov.config.Config;
 import ru.shishmakov.config.ConfigKey;
+import ru.shishmakov.server.ChannelPipelineInitializer;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * Sending HTTP Requests from Netty Client to Server.
@@ -26,7 +28,6 @@ import ru.shishmakov.config.ConfigKey;
  */
 public class TestHttpRequest extends TestBase {
 
-    private static Config config;
     private static String host;
     private static int port;
     private static String uri;
@@ -39,7 +40,7 @@ public class TestHttpRequest extends TestBase {
     @BeforeClass
     public static void init() {
         try {
-            config = Config.getInstance();
+            final Config config = Config.getInstance();
             host = config.getString(ConfigKey.CONNECT_HOST);
             port = config.getInt(ConfigKey.CONNECT_PORT);
             uri = config.getString(ConfigKey.CONNECT_URI);
@@ -65,7 +66,7 @@ public class TestHttpRequest extends TestBase {
         final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         final String json = "{\"action\":\"ping\"}";
-        final ByteBuf content = Unpooled.copiedBuffer(json, CharsetUtil.UTF_8);
+        final ByteBuf content = Unpooled.copiedBuffer(json, StandardCharsets.UTF_8);
 
         final ChannelFuture serverChannel = runServer(bootGroup, processGroup);
         runClient(HttpMethod.PUT, content, uri);
@@ -112,7 +113,7 @@ public class TestHttpRequest extends TestBase {
         final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         final String json = "{\"altron\":\"ping\"}";
-        final ByteBuf content = Unpooled.copiedBuffer(json, CharsetUtil.UTF_8);
+        final ByteBuf content = Unpooled.copiedBuffer(json, StandardCharsets.UTF_8);
 
         final ChannelFuture serverChannel = runServer(bootGroup, processGroup);
         runClient(HttpMethod.POST, content, uri);
@@ -133,10 +134,10 @@ public class TestHttpRequest extends TestBase {
      */
     @Test
     public void testHttp200AuthorRequest() {
-        final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
+        final NioEventLoopGroup bootGroup = new NioEventLoopGroup(1);
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         final String json = "{\"action\":\"ping\"}";
-        final ByteBuf content = Unpooled.copiedBuffer(json, CharsetUtil.UTF_8);
+        final ByteBuf content = Unpooled.copiedBuffer(json, StandardCharsets.UTF_8);
 
         final ChannelFuture serverChannel = runServer(bootGroup, processGroup);
         runClient(HttpMethod.POST, content, "/author");
@@ -180,7 +181,6 @@ public class TestHttpRequest extends TestBase {
                     new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, httpMethod, uri, content);
             final HttpHeaders headers = request.headers();
             headers.set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
-            headers.set(HttpHeaders.Names.COOKIE, config.getString(ConfigKey.COOKIE_VALUE));
             headers.set(HttpHeaders.Names.HOST, host);
             headers.set(HttpHeaders.Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()));
 
@@ -209,7 +209,7 @@ public class TestHttpRequest extends TestBase {
         protected void channelRead0(final ChannelHandlerContext ctx, final HttpObject msg) throws Exception {
             if (msg instanceof FullHttpResponse) {
                 final FullHttpResponse response = (FullHttpResponse) msg;
-                final String data = response.content().toString(CharsetUtil.UTF_8);
+                final String data = response.content().toString(StandardCharsets.UTF_8);
                 buffer.append(data);
             }
         }

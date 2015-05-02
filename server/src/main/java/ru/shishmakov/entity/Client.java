@@ -1,8 +1,5 @@
 package ru.shishmakov.entity;
 
-import com.google.gson.annotations.SerializedName;
-import org.bson.types.ObjectId;
-
 /**
  * The structure of document into database for each client.
  *
@@ -10,12 +7,11 @@ import org.bson.types.ObjectId;
  */
 public class Client {
 
-    @SerializedName("_id")
-    private ObjectId clientId;
+    private Object sessionid;
     private long quantity;
 
-    public ObjectId getClientId() {
-        return clientId;
+    public Object getSessionid() {
+        return sessionid;
     }
 
     public long getQuantity() {

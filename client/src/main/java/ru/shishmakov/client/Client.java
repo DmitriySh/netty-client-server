@@ -1,6 +1,7 @@
 package ru.shishmakov.client;
 
 
+import com.google.gson.JsonObject;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -9,13 +10,13 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.*;
-import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.shishmakov.config.Config;
 import ru.shishmakov.config.ConfigKey;
 
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -49,9 +50,8 @@ public class Client {
                     .channel(NioSocketChannel.class)
                     .handler(new ClientChannelHandler());
 
-            final String json = "{\"_id\":\"ObjectId(\"552fcaadcebf0f7b1ae94ca4\")\", \"action\":\"ping\"}";
+            final String json = buildJson();
             final FullHttpRequest request = buildFullHttpRequest(json);
-
             final Channel clientChannel = client.connect(host, port).sync().channel();
             logger.warn("Start the client: {}. Listen on local address: {}; remote address: {}",
                     this.getClass().getSimpleName(), clientChannel.localAddress(), clientChannel.remoteAddress());
@@ -68,18 +68,24 @@ public class Client {
         }
     }
 
-    private FullHttpRequest buildFullHttpRequest(String jsonMessage) {
-        final ByteBuf content = Unpooled.copiedBuffer(jsonMessage, CharsetUtil.UTF_8);
+    private FullHttpRequest buildFullHttpRequest(final String json) {
+        final ByteBuf content = Unpooled.copiedBuffer(json, StandardCharsets.UTF_8);
         final FullHttpRequest request =
                 new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri, content);
         final HttpHeaders headers = request.headers();
         headers.set(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=UTF-8");
         headers.set(HttpHeaders.Names.ACCEPT, "application/json");
         headers.set(HttpHeaders.Names.USER_AGENT, "Netty 4.0");
-        headers.set(HttpHeaders.Names.COOKIE, config.getString(ConfigKey.COOKIE_VALUE));
         headers.set(HttpHeaders.Names.HOST, host);
         headers.set(HttpHeaders.Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()));
         return request;
+    }
+
+    private String buildJson() {
+        final JsonObject json = new JsonObject();
+        json.addProperty("action", "ping");
+        json.addProperty("sessionid", config.getString(ConfigKey.SESSION_ID));
+        return json.toString();
     }
 
     public static void main(final String[] args) throws Exception {

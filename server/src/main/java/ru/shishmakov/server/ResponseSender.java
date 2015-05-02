@@ -6,12 +6,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.shishmakov.helper.ResponseWorker;
 
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Class sends the HTTP Response which was prepared the previous channels.
@@ -43,8 +43,8 @@ public class ResponseSender extends ChannelInboundHandlerAdapter {
         }
         final ResponseWorker worker = (ResponseWorker) msg;
         final FullHttpResponse response = worker.getWorker();
+        logger.debug("Sent the data:{}", response.content().toString(StandardCharsets.UTF_8));
         ctx.write(response);
         ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
-        logger.debug("Sent the data:{}", response.content().toString(CharsetUtil.UTF_8));
     }
 }
