@@ -63,6 +63,7 @@ public class TestHttpRequest extends TestBase {
      */
     @Test
     public void testHttp405NotAllowedMethod() {
+        logger.debug("qwwwwwwwwwwwww");
         final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         final String json = "{\"action\":\"ping\"}";

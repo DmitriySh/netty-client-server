@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Dmitriy Shishmakov
  */
-public class TestBase {
+public abstract class TestBase {
 
     @Rule
     public TestName testName = new TestName();
