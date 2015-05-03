@@ -1,4 +1,4 @@
-package ru.shishmakov.server;
+package ru.shishmakov.config;
 
 import com.google.gson.Gson;
 import com.mongodb.*;

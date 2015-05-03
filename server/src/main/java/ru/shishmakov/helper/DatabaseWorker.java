@@ -1,8 +1,8 @@
 package ru.shishmakov.helper;
 
 import io.netty.handler.codec.http.FullHttpRequest;
-import ru.shishmakov.server.DatabaseHandler;
-import ru.shishmakov.server.ResponseSender;
+import ru.shishmakov.config.DatabaseHandler;
+import ru.shishmakov.config.ResponseSender;
 
 /**
  * Object that carries data between processes {@link ResponseSender} and {@link DatabaseHandler}

@@ -1,4 +1,4 @@
-package ru.shishmakov.server;
+package ru.shishmakov.config;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -9,7 +9,6 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.shishmakov.config.ChannelPipelineInitializer;
 import ru.shishmakov.helper.DatabaseWorker;
 import ru.shishmakov.helper.ResponseUtil;
 import ru.shishmakov.helper.ResponseWorker;

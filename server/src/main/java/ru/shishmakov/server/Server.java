@@ -11,9 +11,12 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import ru.shishmakov.config.ChannelPipelineInitializer;
 import ru.shishmakov.config.Config;
 import ru.shishmakov.config.ConfigKey;
+import ru.shishmakov.config.ServerConfig;
 import ru.shishmakov.helper.Database;
 
 import java.lang.invoke.MethodHandles;
@@ -38,6 +41,9 @@ public class Server {
 
     public void run() throws InterruptedException {
         logger.warn("Initialise server ...");
+        AbstractApplicationContext context = new AnnotationConfigApplicationContext(
+                ServerConfig.class);
+        context.getBean();
         final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         try {

@@ -1,4 +1,4 @@
-package ru.shishmakov.server;
+package ru.shishmakov.config;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;

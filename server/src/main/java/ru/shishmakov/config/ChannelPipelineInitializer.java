@@ -11,9 +11,6 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import ru.shishmakov.server.DatabaseHandler;
-import ru.shishmakov.server.RequestProcessor;
-import ru.shishmakov.server.ResponseSender;
 import ru.shishmakov.server.Server;
 
 /**
