@@ -1,10 +1,10 @@
 package ru.shishmakov.config;
 
 /**
- * Names of configuration keys used to get values from {@link Config} instance.
+ * Names of configuration keys used to get values from {@link AppConfig} instance.
  *
  * @author Dmitriy Shishmakov
- * @see Config
+ * @see AppConfig
  */
 public final class ConfigKey {
 

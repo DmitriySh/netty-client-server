@@ -8,6 +8,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shishmakov.config.ChannelPipelineInitializer;
 import ru.shishmakov.helper.ResponseWorker;
 
 import java.lang.invoke.MethodHandles;

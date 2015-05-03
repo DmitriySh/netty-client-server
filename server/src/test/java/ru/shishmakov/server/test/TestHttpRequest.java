@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.shishmakov.config.Config;
 import ru.shishmakov.config.ConfigKey;
-import ru.shishmakov.server.ChannelPipelineInitializer;
+import ru.shishmakov.config.ChannelPipelineInitializer;
 
 import java.nio.charset.StandardCharsets;
 

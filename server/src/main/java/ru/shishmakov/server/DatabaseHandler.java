@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shishmakov.config.ChannelPipelineInitializer;
 import ru.shishmakov.entity.Client;
 import ru.shishmakov.entity.Protocol;
 import ru.shishmakov.helper.Database;
