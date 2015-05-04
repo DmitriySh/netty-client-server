@@ -16,6 +16,7 @@ public final class ConfigKey {
     public static final String DATABASE_USER = "database.user";
     public static final String DATABASE_PASSWORD = "database.password";
     public static final String DATABASE_NAME = "database.name";
+    public static final String COLLECTION_NAME = DATABASE_NAME;
     public static final String BIND_HOST = "bind.host";
     public static final String BIND_PORT = "bind.port";
     public static final String CONNECT_HOST = "connect.host";

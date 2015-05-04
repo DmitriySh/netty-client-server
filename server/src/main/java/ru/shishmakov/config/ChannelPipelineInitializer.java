@@ -1,5 +1,6 @@
 package ru.shishmakov.config;
 
+import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -30,11 +31,14 @@ public class ChannelPipelineInitializer extends ChannelInitializer<SocketChannel
     @Autowired
     private HttpResponseEncoder httpResponseEncoder;
     @Autowired
-    private RequestProcessor requestProcessor;
+    @Qualifier("requestProcessor")
+    private ChannelInboundHandler requestProcessor;
     @Autowired
-    private DatabaseHandler databaseHandler;
+    @Qualifier("databaseHandler")
+    private ChannelInboundHandler databaseHandler;
     @Autowired
-    private ResponseSender responseSender;
+    @Qualifier("responseSender")
+    private ChannelInboundHandler responseSender;
 
     public void setHttpRequestDecoder(final HttpRequestDecoder httpRequestDecoder) {
         this.httpRequestDecoder = httpRequestDecoder;

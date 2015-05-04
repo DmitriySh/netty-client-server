@@ -9,6 +9,8 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import ru.shishmakov.helper.DatabaseWorker;
 import ru.shishmakov.helper.ResponseUtil;
 import ru.shishmakov.helper.ResponseWorker;
@@ -22,6 +24,8 @@ import java.nio.charset.StandardCharsets;
  * @author Dmitriy Shishmakov
  * @see ChannelPipelineInitializer
  */
+@Component
+@Qualifier("requestProcessor")
 public class RequestProcessor extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles

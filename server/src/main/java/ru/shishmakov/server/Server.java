@@ -60,10 +60,11 @@ public class Server {
         final NioEventLoopGroup bootGroup = context.getBean("bootGroup", NioEventLoopGroup.class);
         final NioEventLoopGroup processGroup = context.getBean("processGroup", NioEventLoopGroup.class);
         try {
-            // testing connection
+            logger.warn("Check connection to MongoDB ... ");
             mongoClient.isLocked();
             final String host = config.getBindHost();
             final int port = config.getBindPort();
+            logger.warn("Connected to MongoDB on {}:{}", host, port);
             new Server(host, port).run(bootGroup, processGroup);
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);

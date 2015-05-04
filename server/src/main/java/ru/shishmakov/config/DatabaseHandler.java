@@ -11,6 +11,10 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.stereotype.Component;
 import ru.shishmakov.config.ChannelPipelineInitializer;
 import ru.shishmakov.entity.Client;
 import ru.shishmakov.entity.Protocol;
@@ -30,6 +34,8 @@ import java.util.UUID;
  * @author Dmitriy Shishmakov
  * @see ChannelPipelineInitializer
  */
+@Component
+@Qualifier("databaseHandler")
 public class DatabaseHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
@@ -42,6 +48,10 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
      * Protocol to send the messages
      */
     private static final String PONG = "pong";
+
+    @Autowired
+    private MongoOperations mongoTemplate;
+
     /**
      * Converter Java Object -> JSON, JSON -> Java Object
      */
@@ -104,10 +114,7 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
      * @return quantity of requests from current client
      */
     private Client findClient(final Protocol protocol) {
-        final DBCollection collection = Database.getDBCollection();
-        if (collection == null) {
-            throw new IllegalArgumentException("The database don't have a link with collection for making the query.");
-        }
+        final DBCollection collection = mongoTemplate.getCollection(ConfigKey.COLLECTION_NAME);
 
         final Object sessionId = protocol.getSessionid();
         if (sessionId == null) {
@@ -117,7 +124,6 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
             final String json = JSON.serialize(data);
             return gson.fromJson(json, Client.class);
         }
-
 
         // create a finding query
         final DBObject query = QueryBuilder.start("sessionid").is(UUID.fromString(sessionId.toString())).get();

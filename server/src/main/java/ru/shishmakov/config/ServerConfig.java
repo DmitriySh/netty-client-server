@@ -19,9 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.authentication.UserCredentials;
-import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
 import java.net.UnknownHostException;
 
@@ -50,21 +48,6 @@ public class ServerConfig {
     @Bean
     public HttpResponseEncoder httpResponseEncoder() {
         return new HttpResponseEncoder();
-    }
-
-    @Bean
-    public RequestProcessor requestProcessor() {
-        return new RequestProcessor();
-    }
-
-    @Bean
-    public DatabaseHandler databaseHandler() {
-        return new DatabaseHandler();
-    }
-
-    @Bean
-    public ResponseSender responseSender() {
-        return new ResponseSender();
     }
 
     @Bean(name = "bootGroup")
