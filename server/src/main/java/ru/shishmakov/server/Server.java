@@ -2,9 +2,9 @@ package ru.shishmakov.server;
 
 
 import com.mongodb.Mongo;
+import com.mongodb.ServerAddress;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.nio.NioEventLoopGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -26,46 +26,36 @@ public class Server {
 
     private final String host;
     private final int port;
+    private final ServerBootstrap server;
 
-    public Server(final String host, final int port) {
-        this.host = host;
-        this.port = port;
+    public Server(final AppConfig config, final ServerBootstrap server) {
+        this.host = config.getBindHost();
+        this.port = config.getBindPort();
+        this.server = server;
     }
 
-    public void run(NioEventLoopGroup bootGroup, NioEventLoopGroup processGroup) throws InterruptedException {
+    public void run() throws InterruptedException {
         logger.warn("Initialise server ...");
-        AbstractApplicationContext context = new AnnotationConfigApplicationContext(
-                ServerConfig.class);
-        try {
-            final ServerBootstrap server = context.getBean("server", ServerBootstrap.class);
-            final Channel serverChannel = server.bind(host, port).sync().channel();
-            logger.warn("Start the server: {}. Listen on: {}", this.getClass().getSimpleName(), serverChannel.localAddress());
-            serverChannel.closeFuture().sync();
-            logger.warn("Shutdown the server: {}", serverChannel);
-        } finally {
-            // shutdown all events
-            bootGroup.shutdownGracefully();
-            processGroup.shutdownGracefully();
-            // waiting termination of all threads
-            bootGroup.terminationFuture().sync();
-            processGroup.terminationFuture().sync();
-        }
+        final Channel serverChannel = server.bind(host, port).sync().channel();
+        logger.warn("Start the server: {}. Listen on: {}", this.getClass().getSimpleName(), serverChannel.localAddress());
+
+        serverChannel.closeFuture().sync();
+        logger.warn("Shutdown the server: {}", serverChannel);
     }
 
     public static void main(final String[] args) {
         final AbstractApplicationContext context = new AnnotationConfigApplicationContext(
                 ServerConfig.class);
+        context.registerShutdownHook();
         final Mongo mongoClient = context.getBean(Mongo.class);
         final AppConfig config = context.getBean(AppConfig.class);
-        final NioEventLoopGroup bootGroup = context.getBean("bootGroup", NioEventLoopGroup.class);
-        final NioEventLoopGroup processGroup = context.getBean("processGroup", NioEventLoopGroup.class);
+        final ServerBootstrap server = context.getBean("server", ServerBootstrap.class);
         try {
+            final ServerAddress address = mongoClient.getAddress();
             logger.warn("Check connection to MongoDB ... ");
             mongoClient.isLocked();
-            final String host = config.getBindHost();
-            final int port = config.getBindPort();
-            logger.warn("Connected to MongoDB on {}:{}", host, port);
-            new Server(host, port).run(bootGroup, processGroup);
+            logger.warn("Connected to MongoDB on {}:{}", address.getHost(), address.getPort());
+            new Server(config, server).run();
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);
         }

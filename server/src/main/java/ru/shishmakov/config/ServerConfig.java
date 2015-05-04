@@ -12,6 +12,8 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -50,14 +52,20 @@ public class ServerConfig {
         return new HttpResponseEncoder();
     }
 
-    @Bean(name = "bootGroup")
+    @Bean(name = "bootGroup", destroyMethod = "shutdownGracefully")
     public NioEventLoopGroup bootGroup() {
         return new NioEventLoopGroup(1);
     }
 
-    @Bean(name = "processGroup")
+    @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
     public NioEventLoopGroup processGroup() {
         return new NioEventLoopGroup();
+    }
+
+    @Bean(name = "eventExecutorGroup", destroyMethod = "shutdownGracefully")
+    public EventExecutorGroup eventExecutorGroup() {
+        final int countThreads = Runtime.getRuntime().availableProcessors() * 2;
+        return new DefaultEventExecutorGroup(countThreads);
     }
 
     @Bean(name = "server")
@@ -77,8 +85,8 @@ public class ServerConfig {
         return new MongoClient(new ServerAddress(host, port));
     }
 
-    @Bean
-    public MongoTemplate mongoDbFactory() throws Exception {
+    @Bean(name = "mongoTemplate")
+    public MongoTemplate mongoTemplate() throws Exception {
         final String user = config.getDatabaseUser();
         final String password = config.getDatabasePassword();
         final String databaseName = config.getDatabaseName();

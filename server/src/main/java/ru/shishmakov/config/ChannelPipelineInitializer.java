@@ -7,7 +7,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,6 +39,9 @@ public class ChannelPipelineInitializer extends ChannelInitializer<SocketChannel
     @Qualifier("responseSender")
     private ChannelInboundHandler responseSender;
 
+    @Autowired
+    public EventExecutorGroup eventExecutorGroup;
+
     public void setHttpRequestDecoder(final HttpRequestDecoder httpRequestDecoder) {
         this.httpRequestDecoder = httpRequestDecoder;
     }
@@ -64,17 +66,31 @@ public class ChannelPipelineInitializer extends ChannelInitializer<SocketChannel
         this.responseSender = responseSender;
     }
 
+    public void setResponseSender(ChannelInboundHandler responseSender) {
+        this.responseSender = responseSender;
+    }
+
+    public void setRequestProcessor(ChannelInboundHandler requestProcessor) {
+        this.requestProcessor = requestProcessor;
+    }
+
+    public void setDatabaseHandler(ChannelInboundHandler databaseHandler) {
+        this.databaseHandler = databaseHandler;
+    }
+
+    public void setEventExecutorGroup(EventExecutorGroup eventExecutorGroup) {
+        this.eventExecutorGroup = eventExecutorGroup;
+    }
+
     @Override
     protected void initChannel(final SocketChannel ch) throws Exception {
-        final int countThreads = Runtime.getRuntime().availableProcessors() * 2;
-        final EventExecutorGroup workers = new DefaultEventExecutorGroup(countThreads);
         final ChannelPipeline pipeline = ch.pipeline();
         pipeline
                 .addLast("decoder", httpRequestDecoder)
                 .addLast("aggregator", httpObjectAggregator)
                 .addLast("encoder", httpResponseEncoder)
                 .addLast("processor", requestProcessor)
-                .addAfter(workers, "processor", "database", databaseHandler)
+                .addAfter(eventExecutorGroup, "processor", "database", databaseHandler)
                 .addAfter("database", "sender", responseSender);
     }
 }

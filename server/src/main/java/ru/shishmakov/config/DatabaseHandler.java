@@ -15,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Component;
-import ru.shishmakov.config.ChannelPipelineInitializer;
 import ru.shishmakov.entity.Client;
 import ru.shishmakov.entity.Protocol;
-import ru.shishmakov.helper.Database;
 import ru.shishmakov.helper.DatabaseWorker;
 import ru.shishmakov.helper.ResponseUtil;
 import ru.shishmakov.helper.ResponseWorker;
@@ -50,6 +48,7 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
     private static final String PONG = "pong";
 
     @Autowired
+    @Qualifier("mongoTemplate")
     private MongoOperations mongoTemplate;
 
     /**
