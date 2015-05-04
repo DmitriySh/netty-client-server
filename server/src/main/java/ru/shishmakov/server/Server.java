@@ -1,23 +1,16 @@
 package ru.shishmakov.server;
 
 
-import com.mongodb.MongoClient;
+import com.mongodb.Mongo;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-import ru.shishmakov.config.ChannelPipelineInitializer;
-import ru.shishmakov.config.Config;
-import ru.shishmakov.config.ConfigKey;
+import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.config.ServerConfig;
-import ru.shishmakov.helper.Database;
 
 import java.lang.invoke.MethodHandles;
 
@@ -39,21 +32,12 @@ public class Server {
         this.port = port;
     }
 
-    public void run() throws InterruptedException {
+    public void run(NioEventLoopGroup bootGroup, NioEventLoopGroup processGroup) throws InterruptedException {
         logger.warn("Initialise server ...");
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(
                 ServerConfig.class);
-        context.getBean();
-        final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
-        final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         try {
-            final ServerBootstrap server = new ServerBootstrap();
-            server.group(bootGroup, processGroup)
-                    .option(ChannelOption.SO_REUSEADDR, true)
-                    .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new ChannelPipelineInitializer());
-
+            final ServerBootstrap server = context.getBean("server", ServerBootstrap.class);
             final Channel serverChannel = server.bind(host, port).sync().channel();
             logger.warn("Start the server: {}. Listen on: {}", this.getClass().getSimpleName(), serverChannel.localAddress());
             serverChannel.closeFuture().sync();
@@ -69,19 +53,20 @@ public class Server {
     }
 
     public static void main(final String[] args) {
-        MongoClient mongo = null;
+        final AbstractApplicationContext context = new AnnotationConfigApplicationContext(
+                ServerConfig.class);
+        final Mongo mongoClient = context.getBean(Mongo.class);
+        final AppConfig config = context.getBean(AppConfig.class);
+        final NioEventLoopGroup bootGroup = context.getBean("bootGroup", NioEventLoopGroup.class);
+        final NioEventLoopGroup processGroup = context.getBean("processGroup", NioEventLoopGroup.class);
         try {
-            final Config config = Config.getInstance();
-            mongo = Database.getInstance(config);
-            final String host = config.getString(ConfigKey.BIND_HOST);
-            final int port = config.getInt(ConfigKey.BIND_PORT);
-            new Server(host, port).run();
+            // testing connection
+            mongoClient.isLocked();
+            final String host = config.getBindHost();
+            final int port = config.getBindPort();
+            new Server(host, port).run(bootGroup, processGroup);
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);
-        } finally {
-            if (mongo != null) {
-                mongo.close();
-            }
         }
     }
 

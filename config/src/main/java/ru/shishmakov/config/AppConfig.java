@@ -13,7 +13,7 @@ public interface AppConfig {
 
     String getDatabaseHost();
 
-    String getDatabasePort();
+    Integer getDatabasePort();
 
     String getDatabaseName();
 

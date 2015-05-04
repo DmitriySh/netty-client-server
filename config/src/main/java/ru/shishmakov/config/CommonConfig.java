@@ -47,8 +47,8 @@ public class CommonConfig {
             }
 
             @Override
-            public String getDatabasePort() {
-                return environment.getRequiredProperty(ConfigKey.DATABASE_PORT);
+            public Integer getDatabasePort() {
+                return environment.getRequiredProperty(ConfigKey.DATABASE_PORT, Integer.class);
             }
 
             @Override

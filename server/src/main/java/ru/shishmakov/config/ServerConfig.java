@@ -1,5 +1,8 @@
 package ru.shishmakov.config;
 
+import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -15,6 +18,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.authentication.UserCredentials;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+
+import java.net.UnknownHostException;
 
 @Configuration
 @ComponentScan(basePackageClasses = PackageMarker.class)
@@ -24,6 +33,9 @@ public class ServerConfig {
     @Autowired
     @Qualifier("channelPipelineInitializer")
     private ChannelInitializer channelPipelineInitializer;
+
+    @Autowired
+    private AppConfig config;
 
     @Bean
     public HttpRequestDecoder httpRequestDecoder() {
@@ -65,7 +77,7 @@ public class ServerConfig {
         return new NioEventLoopGroup();
     }
 
-    @Bean
+    @Bean(name = "server")
     public ServerBootstrap serverBootstrap() {
         final ServerBootstrap server = new ServerBootstrap();
         server.group(bootGroup(), processGroup())
@@ -73,5 +85,21 @@ public class ServerConfig {
                 .handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(channelPipelineInitializer);
         return server;
+    }
+
+    @Bean(name = "mongo", destroyMethod = "close")
+    public Mongo mongo() throws UnknownHostException {
+        final String host = config.getDatabaseHost();
+        final Integer port = config.getDatabasePort();
+        return new MongoClient(new ServerAddress(host, port));
+    }
+
+    @Bean
+    public MongoTemplate mongoDbFactory() throws Exception {
+        final String user = config.getDatabaseUser();
+        final String password = config.getDatabasePassword();
+        final String databaseName = config.getDatabaseName();
+        final UserCredentials userCredentials = new UserCredentials(user, password);
+        return new MongoTemplate(mongo(), databaseName, userCredentials);
     }
 }
