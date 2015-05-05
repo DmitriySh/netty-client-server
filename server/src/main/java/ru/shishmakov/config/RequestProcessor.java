@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
  * Class parses the HTTP Request which was sent to the server.
  *
  * @author Dmitriy Shishmakov
- * @see ChannelPipelineInitializer
+ * @see ServerChannelPipelineInitializer
  */
 @Component
 @Qualifier("requestProcessor")

@@ -25,13 +25,16 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.net.UnknownHostException;
 
+/**
+ * Extension of configuration for Server
+ */
 @Configuration
 @ComponentScan(basePackageClasses = PackageMarker.class)
 @Import(CommonConfig.class)
 public class ServerConfig {
 
     @Autowired
-    @Qualifier("channelPipelineInitializer")
+    @Qualifier("serverChannelPipelineInitializer")
     private ChannelInitializer channelPipelineInitializer;
 
     @Autowired

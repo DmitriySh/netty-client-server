@@ -20,8 +20,8 @@ import ru.shishmakov.server.Server;
  * @see Server
  */
 @Component
-@Qualifier("channelPipelineInitializer")
-public class ChannelPipelineInitializer extends ChannelInitializer<SocketChannel> {
+@Qualifier("serverChannelPipelineInitializer")
+public class ServerChannelPipelineInitializer extends ChannelInitializer<SocketChannel> {
 
     @Autowired
     private HttpRequestDecoder httpRequestDecoder;

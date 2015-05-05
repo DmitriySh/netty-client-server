@@ -7,6 +7,8 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
@@ -14,6 +16,8 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author Dmitriy Shishmakov
  */
+@Component
+@Qualifier("httpClientProcessorHandler")
 public class HttpClientProcessorHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles

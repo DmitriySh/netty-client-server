@@ -6,14 +6,12 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.shishmakov.config.Config;
-import ru.shishmakov.config.ConfigKey;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import ru.shishmakov.config.AppConfig;
+import ru.shishmakov.config.ClientConfig;
 
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
@@ -29,43 +27,34 @@ public class Client {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
 
-    private static Config config;
-
     private final String host;
     private final int port;
     private final String uri;
+    private final String sessionId;
+    private final Bootstrap client;
 
-    public Client(final String host, final int port, final String uri) {
-        this.host = host;
-        this.port = port;
-        this.uri = uri;
+    public Client(final AnnotationConfigApplicationContext context) {
+        final AppConfig config = context.getBean(AppConfig.class);
+        this.client = context.getBean("client", Bootstrap.class);
+        this.host = config.getConnectionHost();
+        this.port = config.getConnectionPort();
+        this.uri = config.getConnectionUri();
+        this.sessionId = config.getSessionId();
     }
 
     private void run() throws InterruptedException {
         logger.warn("Initialise client ...");
-        EventLoopGroup group = new NioEventLoopGroup();
-        try {
-            final Bootstrap client = new Bootstrap();
-            client.group(group)
-                    .channel(NioSocketChannel.class)
-                    .handler(new ClientChannelHandler());
+        final Channel clientChannel = client.connect(host, port).sync().channel();
+        logger.warn("Start the client: {}. Listen on local address: {}; remote address: {}",
+                this.getClass().getSimpleName(), clientChannel.localAddress(), clientChannel.remoteAddress());
+        final String json = buildJson();
+        final FullHttpRequest request = buildFullHttpRequest(json);
+        clientChannel.writeAndFlush(request);
+        logger.info("Send HTTP request: {} {} {}; content: {}", request.getMethod(), request.getUri(),
+                request.getProtocolVersion(), json);
+        clientChannel.closeFuture().sync();
+        logger.warn("Client to close the connection: {}", Client.class.getSimpleName());
 
-            final String json = buildJson();
-            final FullHttpRequest request = buildFullHttpRequest(json);
-            final Channel clientChannel = client.connect(host, port).sync().channel();
-            logger.warn("Start the client: {}. Listen on local address: {}; remote address: {}",
-                    this.getClass().getSimpleName(), clientChannel.localAddress(), clientChannel.remoteAddress());
-            clientChannel.writeAndFlush(request);
-            logger.info("Send HTTP request: {} {} {}; content: {}", request.getMethod(), request.getUri(),
-                    request.getProtocolVersion(), json);
-            clientChannel.closeFuture().sync();
-            logger.warn("Client to close the connection: {}", Client.class.getSimpleName());
-        } finally {
-            // shutdown all events
-            group.shutdownGracefully();
-            // waiting termination of all threads
-            group.terminationFuture().sync();
-        }
     }
 
     private FullHttpRequest buildFullHttpRequest(final String json) {
@@ -84,17 +73,15 @@ public class Client {
     private String buildJson() {
         final JsonObject json = new JsonObject();
         json.addProperty("action", "ping");
-        json.addProperty("sessionid", config.getString(ConfigKey.SESSION_ID));
+        json.addProperty("sessionid", sessionId);
         return json.toString();
     }
 
     public static void main(final String[] args) throws Exception {
+        final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ClientConfig.class);
+        context.registerShutdownHook();
         try {
-            config = Config.getInstance();
-            final String host = config.getString(ConfigKey.CONNECT_HOST);
-            final int port = config.getInt(ConfigKey.CONNECT_PORT);
-            final String uri = config.getString(ConfigKey.CONNECT_URI);
-            new Client(host, port, uri).run();
+            new Client(context).run();
         } catch (Exception e) {
             logger.error("The client failure: " + e.getMessage(), e);
         }

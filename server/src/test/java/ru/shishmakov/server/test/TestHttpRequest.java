@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.shishmakov.config.Config;
 import ru.shishmakov.config.ConfigKey;
-import ru.shishmakov.config.ChannelPipelineInitializer;
+import ru.shishmakov.config.ServerChannelPipelineInitializer;
 
 import java.nio.charset.StandardCharsets;
 
@@ -163,7 +163,7 @@ public class TestHttpRequest extends TestBase {
                 .option(ChannelOption.SO_REUSEADDR, true)
                 .channel(NioServerSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new ChannelPipelineInitializer());
+                .childHandler(new ServerChannelPipelineInitializer());
         return server.bind(host, port);
     }
 

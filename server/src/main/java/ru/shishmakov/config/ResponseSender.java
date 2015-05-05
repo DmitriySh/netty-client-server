@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import ru.shishmakov.config.ChannelPipelineInitializer;
 import ru.shishmakov.helper.ResponseWorker;
 
 import java.lang.invoke.MethodHandles;
@@ -21,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  * The last inbound channel of {@link ChannelPipeline}.
  *
  * @author Dmitriy Shishmakov
- * @see ChannelPipelineInitializer
+ * @see ServerChannelPipelineInitializer
  */
 @Component
 @Qualifier("responseSender")
