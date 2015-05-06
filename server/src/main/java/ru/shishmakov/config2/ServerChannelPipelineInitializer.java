@@ -1,4 +1,4 @@
-package ru.shishmakov.config;
+package ru.shishmakov.config2;
 
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
@@ -38,7 +38,6 @@ public class ServerChannelPipelineInitializer extends ChannelInitializer<SocketC
     @Autowired
     @Qualifier("responseSender")
     private ChannelInboundHandler responseSender;
-
     @Autowired
     public EventExecutorGroup eventExecutorGroup;
 

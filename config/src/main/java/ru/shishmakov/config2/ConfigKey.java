@@ -1,4 +1,4 @@
-package ru.shishmakov.config;
+package ru.shishmakov.config2;
 
 /**
  * Names of configuration keys used to get values from {@link AppConfig} instance.

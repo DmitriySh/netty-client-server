@@ -1,4 +1,4 @@
-package ru.shishmakov.config;
+package ru.shishmakov.config2;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
  * @author Dmitriy Shishmakov
  * @see ServerChannelPipelineInitializer
  */
-@Component
+@Component()
 @Qualifier("requestProcessor")
 public class RequestProcessor extends ChannelInboundHandlerAdapter {
 

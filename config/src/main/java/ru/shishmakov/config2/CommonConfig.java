@@ -1,4 +1,4 @@
-package ru.shishmakov.config;
+package ru.shishmakov.config2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
  * @author Dmitriy Shishmakov
  */
 @Configuration
-@PropertySource("classpath:test.properties")
+@PropertySource("classpath:app.properties")
 public class CommonConfig {
 
     @Autowired

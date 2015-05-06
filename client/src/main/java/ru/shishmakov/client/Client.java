@@ -10,8 +10,8 @@ import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ru.shishmakov.config.AppConfig;
-import ru.shishmakov.config.ClientConfig;
+import ru.shishmakov.config2.AppConfig;
+import ru.shishmakov.config2.ClientConfig;
 
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
@@ -78,9 +78,8 @@ public class Client {
     }
 
     public static void main(final String[] args) throws Exception {
-        final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ClientConfig.class);
-        context.registerShutdownHook();
-        try {
+        try (final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ClientConfig.class)) {
+            context.registerShutdownHook();
             new Client(context).run();
         } catch (Exception e) {
             logger.error("The client failure: " + e.getMessage(), e);

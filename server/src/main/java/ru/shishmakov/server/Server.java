@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-import ru.shishmakov.config.AppConfig;
-import ru.shishmakov.config.ServerConfig;
+import ru.shishmakov.config2.AppConfig;
+import ru.shishmakov.config2.ServerConfig;
 
 import java.lang.invoke.MethodHandles;
 
@@ -44,19 +44,21 @@ public class Server {
     }
 
     public static void main(final String[] args) {
-        final AbstractApplicationContext context = new AnnotationConfigApplicationContext(
-                ServerConfig.class);
-        context.registerShutdownHook();
-        try {
-            final Mongo mongoClient = context.getBean(Mongo.class);
-            final ServerAddress address = mongoClient.getAddress();
-            logger.warn("Check connection to MongoDB ... ");
-            mongoClient.isLocked();
-            logger.warn("Connected to MongoDB on {}:{}", address.getHost(), address.getPort());
+        try (AbstractApplicationContext context = new AnnotationConfigApplicationContext(
+                ServerConfig.class)) {
+            context.registerShutdownHook();
+            checkDbConnection(context);
             new Server(context).run();
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);
         }
+    }
+
+    private static void checkDbConnection(final AbstractApplicationContext context) {
+        logger.warn("Check connection to MongoDB ... ");
+        final Mongo mongoClient = context.getBean(Mongo.class);
+        final ServerAddress address = mongoClient.getAddress();
+        logger.warn("Connected to MongoDB on {}:{}", address.getHost(), address.getPort());
     }
 
 }

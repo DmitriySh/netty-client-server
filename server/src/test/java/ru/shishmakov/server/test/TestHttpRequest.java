@@ -13,12 +13,14 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.shishmakov.config.Config;
-import ru.shishmakov.config.ConfigKey;
-import ru.shishmakov.config.ServerChannelPipelineInitializer;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import ru.shishmakov.config2.AppConfig;
 
+import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -26,24 +28,31 @@ import java.nio.charset.StandardCharsets;
  *
  * @author Dmitriy Shishmakov
  */
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TestHttpRequest extends TestBase {
 
-    private static String host;
-    private static int port;
-    private static String uri;
+    @Autowired
+    private AppConfig config;
 
-    private static StringBuilder buffer = new StringBuilder();
+    @Autowired
+    @Qualifier("serverChannelPipelineInitializer")
+    private ChannelInitializer channelPipelineInitializer;
+
+    private String host;
+    private int port;
+    private String uri;
+
+    private static final StringBuilder buffer = new StringBuilder();
 
     /**
      * Configuration is necessary to all test cases.
      */
-    @BeforeClass
-    public static void init() {
+    @PostConstruct
+    public void init() {
         try {
-            final Config config = Config.getInstance();
-            host = config.getString(ConfigKey.CONNECT_HOST);
-            port = config.getInt(ConfigKey.CONNECT_PORT);
-            uri = config.getString(ConfigKey.CONNECT_URI);
+            this.host = config.getConnectionHost();
+            this.port = config.getConnectionPort();
+            this.uri = config.getConnectionUri();
         } catch (Exception e) {
             throw new IllegalStateException("Test failure: " + e.getMessage(), e);
         }
@@ -63,7 +72,6 @@ public class TestHttpRequest extends TestBase {
      */
     @Test
     public void testHttp405NotAllowedMethod() {
-        logger.debug("qwwwwwwwwwwwww");
         final NioEventLoopGroup bootGroup = new NioEventLoopGroup();
         final NioEventLoopGroup processGroup = new NioEventLoopGroup();
         final String json = "{\"action\":\"ping\"}";
@@ -163,7 +171,7 @@ public class TestHttpRequest extends TestBase {
                 .option(ChannelOption.SO_REUSEADDR, true)
                 .channel(NioServerSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new ServerChannelPipelineInitializer());
+                .childHandler(channelPipelineInitializer);
         return server.bind(host, port);
     }
 

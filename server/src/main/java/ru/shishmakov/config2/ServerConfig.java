@@ -1,10 +1,9 @@
-package ru.shishmakov.config;
+package ru.shishmakov.config2;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -34,11 +33,11 @@ import java.net.UnknownHostException;
 public class ServerConfig {
 
     @Autowired
-    @Qualifier("serverChannelPipelineInitializer")
-    private ChannelInitializer channelPipelineInitializer;
+    private AppConfig config;
 
     @Autowired
-    private AppConfig config;
+    @Qualifier("serverChannelPipelineInitializer")
+    private ServerChannelPipelineInitializer channelPipelineInitializer;
 
     @Bean
     public HttpRequestDecoder httpRequestDecoder() {

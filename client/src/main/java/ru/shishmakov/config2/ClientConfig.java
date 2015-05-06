@@ -1,4 +1,4 @@
-package ru.shishmakov.config;
+package ru.shishmakov.config2;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Import;
  * Extension of configuration for Client
  */
 @Configuration
-@Import(CommonConfig.class)
 @ComponentScan(basePackageClasses = PackageMarker.class)
+@Import(CommonConfig.class)
 public class ClientConfig {
 
     @Autowired
@@ -25,7 +25,7 @@ public class ClientConfig {
 
     @Autowired
     @Qualifier("clientChannelPipelineInitializer")
-    private ClientChannelPipelineInitializer clientChannelPipelineInitializer;
+    private ClientChannelPipelineInitializer channelPipelineInitializer;
 
     @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
     public NioEventLoopGroup processGroup() {
@@ -42,11 +42,11 @@ public class ClientConfig {
     }
 
     @Bean(name = "client")
-    public Bootstrap serverBootstrap() {
+    public Bootstrap bootstrap() {
         final Bootstrap client = new Bootstrap();
         client.group(processGroup())
                 .channel(NioSocketChannel.class)
-                .handler(clientChannelPipelineInitializer);
+                .handler(channelPipelineInitializer);
         return client;
     }
 }
