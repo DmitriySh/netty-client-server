@@ -53,7 +53,7 @@ public class TestHttpRequest extends TestBase {
             this.host = config.getConnectionHost();
             this.port = config.getConnectionPort();
             this.uri = config.getConnectionUri();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Test failure: " + e.getMessage(), e);
         }
     }
