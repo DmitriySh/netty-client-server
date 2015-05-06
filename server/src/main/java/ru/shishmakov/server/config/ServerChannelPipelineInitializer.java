@@ -65,19 +65,19 @@ public class ServerChannelPipelineInitializer extends ChannelInitializer<SocketC
     this.responseSender = responseSender;
   }
 
-  public void setResponseSender(ChannelInboundHandler responseSender) {
+  public void setResponseSender(final ChannelInboundHandler responseSender) {
     this.responseSender = responseSender;
   }
 
-  public void setRequestProcessor(ChannelInboundHandler requestProcessor) {
+  public void setRequestProcessor(final ChannelInboundHandler requestProcessor) {
     this.requestProcessor = requestProcessor;
   }
 
-  public void setDatabaseHandler(ChannelInboundHandler databaseHandler) {
+  public void setDatabaseHandler(final ChannelInboundHandler databaseHandler) {
     this.databaseHandler = databaseHandler;
   }
 
-  public void setEventExecutorGroup(EventExecutorGroup eventExecutorGroup) {
+  public void setEventExecutorGroup(final EventExecutorGroup eventExecutorGroup) {
     this.eventExecutorGroup = eventExecutorGroup;
   }
 

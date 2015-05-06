@@ -4,6 +4,7 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -39,7 +40,7 @@ public class ServerConfig {
 
   @Autowired
   @Qualifier("serverChannelPipelineInitializer")
-  private ServerChannelPipelineInitializer channelPipelineInitializer;
+  private ChannelInitializer channelPipelineInitializer;
 
   @Bean
   public HttpRequestDecoder httpRequestDecoder() {

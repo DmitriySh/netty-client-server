@@ -32,11 +32,12 @@ public class HttpClientProcessorHandler extends SimpleChannelInboundHandler<Http
   @Override
   protected void channelRead0(final ChannelHandlerContext ctx, final HttpObject msg)
       throws Exception {
-    if (msg instanceof FullHttpResponse) {
-      final FullHttpResponse response = (FullHttpResponse) msg;
-      final String data = response.content().toString(StandardCharsets.UTF_8);
-      logger.info("Receive HTTP response: {} {}; content: {}", response.getProtocolVersion(),
-          response.getStatus(), data);
+    if (!(msg instanceof FullHttpResponse)) {
+      return;
     }
+    final FullHttpResponse response = (FullHttpResponse) msg;
+    final String data = response.content().toString(StandardCharsets.UTF_8);
+    logger.info("Receive HTTP response: {} {}; content: {}", response.getProtocolVersion(),
+        response.getStatus(), data);
   }
 }

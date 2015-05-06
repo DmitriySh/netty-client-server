@@ -1,6 +1,7 @@
 package ru.shishmakov.client.config;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpClientCodec;
@@ -27,7 +28,7 @@ public class ClientConfig {
 
   @Autowired
   @Qualifier("clientChannelPipelineInitializer")
-  private ClientChannelPipelineInitializer channelPipelineInitializer;
+  private ChannelInitializer channelPipelineInitializer;
 
   @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
   public NioEventLoopGroup processGroup() {
