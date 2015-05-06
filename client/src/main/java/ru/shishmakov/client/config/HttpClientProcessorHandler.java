@@ -1,4 +1,4 @@
-package ru.shishmakov.client;
+package ru.shishmakov.client.config;
 
 
 import io.netty.channel.ChannelHandlerContext;

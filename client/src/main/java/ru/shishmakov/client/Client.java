@@ -10,8 +10,8 @@ import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ru.shishmakov.config2.AppConfig;
-import ru.shishmakov.config2.ClientConfig;
+import ru.shishmakov.config.AppConfig;
+import ru.shishmakov.client.config.ClientConfig;
 
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;

@@ -6,7 +6,7 @@ import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
-import ru.shishmakov.config2.ServerConfig;
+import ru.shishmakov.server.config.ServerConfig;
 
 /**
  * Base class for JUnit test classes.
