@@ -22,33 +22,34 @@ import ru.shishmakov.config.CommonConfig;
 @Import(CommonConfig.class)
 public class ClientConfig {
 
-    @Autowired
-    private AppConfig config;
+  @Autowired
+  private AppConfig config;
 
-    @Autowired
-    @Qualifier("clientChannelPipelineInitializer")
-    private ClientChannelPipelineInitializer channelPipelineInitializer;
+  @Autowired
+  @Qualifier("clientChannelPipelineInitializer")
+  private ClientChannelPipelineInitializer channelPipelineInitializer;
 
-    @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
-    public NioEventLoopGroup processGroup() {
-        return new NioEventLoopGroup();
-    }
+  @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
+  public NioEventLoopGroup processGroup() {
+    return new NioEventLoopGroup();
+  }
 
-    @Bean
-    public HttpClientCodec httpClientCodec() {
-        return new HttpClientCodec();
-    }
-    @Bean
-    public HttpObjectAggregator httpObjectAggregator() {
-        return new HttpObjectAggregator(1048576);
-    }
+  @Bean
+  public HttpClientCodec httpClientCodec() {
+    return new HttpClientCodec();
+  }
 
-    @Bean(name = "client")
-    public Bootstrap bootstrap() {
-        final Bootstrap client = new Bootstrap();
-        client.group(processGroup())
-                .channel(NioSocketChannel.class)
-                .handler(channelPipelineInitializer);
-        return client;
-    }
+  @Bean
+  public HttpObjectAggregator httpObjectAggregator() {
+    return new HttpObjectAggregator(1048576);
+  }
+
+  @Bean(name = "client")
+  public Bootstrap bootstrap() {
+    final Bootstrap client = new Bootstrap();
+    client.group(processGroup())
+        .channel(NioSocketChannel.class)
+        .handler(channelPipelineInitializer);
+    return client;
+  }
 }

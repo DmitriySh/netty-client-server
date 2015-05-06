@@ -8,14 +8,14 @@ import ru.shishmakov.server.config.ResponseSender;
  * Object that carries data between processes {@link ResponseSender} and {@link DatabaseHandler}
  */
 public class DatabaseWorker {
-    private final FullHttpRequest worker;
+  private final FullHttpRequest worker;
 
-    public DatabaseWorker(FullHttpRequest worker) {
-        this.worker = worker;
-    }
+  public DatabaseWorker(FullHttpRequest worker) {
+    this.worker = worker;
+  }
 
-    public FullHttpRequest getWorker() {
-        return worker;
-    }
+  public FullHttpRequest getWorker() {
+    return worker;
+  }
 
 }

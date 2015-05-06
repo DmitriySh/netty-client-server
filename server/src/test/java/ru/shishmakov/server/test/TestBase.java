@@ -16,21 +16,21 @@ import ru.shishmakov.server.config.ServerConfig;
 @ContextConfiguration(classes = ServerConfig.class)
 public abstract class TestBase {
 
-    /**
-     * Logger used by test.
-     */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+  /**
+   * Logger used by test.
+   */
+  protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Rule
-    public TestName testName = new TestName();
+  @Rule
+  public TestName testName = new TestName();
 
-    @Before
-    public void setUp() {
-        logTestStart();
-    }
+  @Before
+  public void setUp() {
+    logTestStart();
+  }
 
-    private void logTestStart() {
-        logger.info("Running test \"{}\"", testName.getMethodName());
-    }
+  private void logTestStart() {
+    logger.info("Running test \"{}\"", testName.getMethodName());
+  }
 
 }

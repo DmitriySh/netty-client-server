@@ -34,67 +34,67 @@ import java.net.UnknownHostException;
 @Import(CommonConfig.class)
 public class ServerConfig {
 
-    @Autowired
-    private AppConfig config;
+  @Autowired
+  private AppConfig config;
 
-    @Autowired
-    @Qualifier("serverChannelPipelineInitializer")
-    private ServerChannelPipelineInitializer channelPipelineInitializer;
+  @Autowired
+  @Qualifier("serverChannelPipelineInitializer")
+  private ServerChannelPipelineInitializer channelPipelineInitializer;
 
-    @Bean
-    public HttpRequestDecoder httpRequestDecoder() {
-        return new HttpRequestDecoder();
-    }
+  @Bean
+  public HttpRequestDecoder httpRequestDecoder() {
+    return new HttpRequestDecoder();
+  }
 
-    @Bean
-    public HttpObjectAggregator httpObjectAggregator() {
-        return new HttpObjectAggregator(1048576);
-    }
+  @Bean
+  public HttpObjectAggregator httpObjectAggregator() {
+    return new HttpObjectAggregator(1048576);
+  }
 
-    @Bean
-    public HttpResponseEncoder httpResponseEncoder() {
-        return new HttpResponseEncoder();
-    }
+  @Bean
+  public HttpResponseEncoder httpResponseEncoder() {
+    return new HttpResponseEncoder();
+  }
 
-    @Bean(name = "bootGroup", destroyMethod = "shutdownGracefully")
-    public NioEventLoopGroup bootGroup() {
-        return new NioEventLoopGroup(1);
-    }
+  @Bean(name = "bootGroup", destroyMethod = "shutdownGracefully")
+  public NioEventLoopGroup bootGroup() {
+    return new NioEventLoopGroup(1);
+  }
 
-    @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
-    public NioEventLoopGroup processGroup() {
-        return new NioEventLoopGroup();
-    }
+  @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
+  public NioEventLoopGroup processGroup() {
+    return new NioEventLoopGroup();
+  }
 
-    @Bean(name = "eventExecutorGroup", destroyMethod = "shutdownGracefully")
-    public EventExecutorGroup eventExecutorGroup() {
-        final int countThreads = Runtime.getRuntime().availableProcessors() * 2;
-        return new DefaultEventExecutorGroup(countThreads);
-    }
+  @Bean(name = "eventExecutorGroup", destroyMethod = "shutdownGracefully")
+  public EventExecutorGroup eventExecutorGroup() {
+    final int countThreads = Runtime.getRuntime().availableProcessors() * 2;
+    return new DefaultEventExecutorGroup(countThreads);
+  }
 
-    @Bean(name = "server")
-    public ServerBootstrap serverBootstrap() {
-        final ServerBootstrap server = new ServerBootstrap();
-        server.group(bootGroup(), processGroup())
-                .channel(NioServerSocketChannel.class)
-                .handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(channelPipelineInitializer);
-        return server;
-    }
+  @Bean(name = "server")
+  public ServerBootstrap serverBootstrap() {
+    final ServerBootstrap server = new ServerBootstrap();
+    server.group(bootGroup(), processGroup())
+        .channel(NioServerSocketChannel.class)
+        .handler(new LoggingHandler(LogLevel.INFO))
+        .childHandler(channelPipelineInitializer);
+    return server;
+  }
 
-    @Bean(name = "mongo", destroyMethod = "close")
-    public Mongo mongo() throws UnknownHostException {
-        final String host = config.getDatabaseHost();
-        final Integer port = config.getDatabasePort();
-        return new MongoClient(new ServerAddress(host, port));
-    }
+  @Bean(name = "mongo", destroyMethod = "close")
+  public Mongo mongo() throws UnknownHostException {
+    final String host = config.getDatabaseHost();
+    final Integer port = config.getDatabasePort();
+    return new MongoClient(new ServerAddress(host, port));
+  }
 
-    @Bean(name = "mongoTemplate")
-    public MongoTemplate mongoTemplate() throws Exception {
-        final String user = config.getDatabaseUser();
-        final String password = config.getDatabasePassword();
-        final String databaseName = config.getDatabaseName();
-        final UserCredentials userCredentials = new UserCredentials(user, password);
-        return new MongoTemplate(mongo(), databaseName, userCredentials);
-    }
+  @Bean(name = "mongoTemplate")
+  public MongoTemplate mongoTemplate() throws Exception {
+    final String user = config.getDatabaseUser();
+    final String password = config.getDatabasePassword();
+    final String databaseName = config.getDatabaseName();
+    final UserCredentials userCredentials = new UserCredentials(user, password);
+    return new MongoTemplate(mongo(), databaseName, userCredentials);
+  }
 }

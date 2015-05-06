@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.shishmakov.client.Client;
-import ru.shishmakov.client.config.HttpClientProcessorHandler;
 
 /**
  * @author Dmitriy Shishmakov
@@ -19,19 +18,19 @@ import ru.shishmakov.client.config.HttpClientProcessorHandler;
 @Qualifier("clientChannelPipelineInitializer")
 public class ClientChannelPipelineInitializer extends ChannelInitializer<SocketChannel> {
 
-    @Autowired
-    private HttpClientCodec httpClientCodec;
-    @Autowired
-    private HttpObjectAggregator httpObjectAggregator;
-    @Autowired
-    private HttpClientProcessorHandler httpClientProcessorHandler;
+  @Autowired
+  private HttpClientCodec httpClientCodec;
+  @Autowired
+  private HttpObjectAggregator httpObjectAggregator;
+  @Autowired
+  private HttpClientProcessorHandler httpClientProcessorHandler;
 
-    @Override
-    public void initChannel(final SocketChannel ch) throws Exception {
-        ChannelPipeline pipeline = ch.pipeline();
-        pipeline
-                .addLast("codec", httpClientCodec)
-                .addLast("aggregator", httpObjectAggregator)
-                .addLast("processor", httpClientProcessorHandler);
-    }
+  @Override
+  public void initChannel(final SocketChannel ch) throws Exception {
+    ChannelPipeline pipeline = ch.pipeline();
+    pipeline
+        .addLast("codec", httpClientCodec)
+        .addLast("aggregator", httpObjectAggregator)
+        .addLast("processor", httpClientProcessorHandler);
+  }
 }

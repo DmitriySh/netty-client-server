@@ -26,29 +26,29 @@ import java.nio.charset.StandardCharsets;
 @Qualifier("responseSender")
 public class ResponseSender extends ChannelInboundHandlerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles
-            .lookup().lookupClass());
+  private static final Logger logger = LoggerFactory.getLogger(MethodHandles
+      .lookup().lookupClass());
 
-    @Override
-    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
-        logger.error("Fail at handler: " + cause.getMessage(), cause);
-        ctx.close();
-    }
+  @Override
+  public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
+    logger.error("Fail at handler: " + cause.getMessage(), cause);
+    ctx.close();
+  }
 
-    @Override
-    public void channelReadComplete(final ChannelHandlerContext ctx) {
-        ctx.flush();
-    }
+  @Override
+  public void channelReadComplete(final ChannelHandlerContext ctx) {
+    ctx.flush();
+  }
 
-    @Override
-    public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-        if (!(msg instanceof ResponseWorker)) {
-            return;
-        }
-        final ResponseWorker worker = (ResponseWorker) msg;
-        final FullHttpResponse response = worker.getWorker();
-        logger.debug("Sent the data:{}", response.content().toString(StandardCharsets.UTF_8));
-        ctx.write(response);
-        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+  @Override
+  public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
+    if (!(msg instanceof ResponseWorker)) {
+      return;
     }
+    final ResponseWorker worker = (ResponseWorker) msg;
+    final FullHttpResponse response = worker.getWorker();
+    logger.debug("Sent the data:{}", response.content().toString(StandardCharsets.UTF_8));
+    ctx.write(response);
+    ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+  }
 }

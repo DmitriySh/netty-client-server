@@ -20,22 +20,23 @@ import java.nio.charset.StandardCharsets;
 @Qualifier("httpClientProcessorHandler")
 public class HttpClientProcessorHandler extends SimpleChannelInboundHandler<HttpObject> {
 
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles
-            .lookup().lookupClass());
+  private static final Logger logger = LoggerFactory.getLogger(MethodHandles
+      .lookup().lookupClass());
 
-    @Override
-    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
-        logger.error("Fail at handler: " + cause.getMessage(), cause);
-        ctx.close();
-    }
+  @Override
+  public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
+    logger.error("Fail at handler: " + cause.getMessage(), cause);
+    ctx.close();
+  }
 
-    @Override
-    protected void channelRead0(final ChannelHandlerContext ctx, final HttpObject msg) throws Exception {
-        if (msg instanceof FullHttpResponse) {
-            final FullHttpResponse response = (FullHttpResponse) msg;
-            final String data = response.content().toString(StandardCharsets.UTF_8);
-            logger.info("Receive HTTP response: {} {}; content: {}", response.getProtocolVersion(),
-                    response.getStatus(), data);
-        }
+  @Override
+  protected void channelRead0(final ChannelHandlerContext ctx, final HttpObject msg)
+      throws Exception {
+    if (msg instanceof FullHttpResponse) {
+      final FullHttpResponse response = (FullHttpResponse) msg;
+      final String data = response.content().toString(StandardCharsets.UTF_8);
+      logger.info("Receive HTTP response: {} {}; content: {}", response.getProtocolVersion(),
+          response.getStatus(), data);
     }
+  }
 }
