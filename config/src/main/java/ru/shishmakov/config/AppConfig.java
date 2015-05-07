@@ -3,26 +3,26 @@ package ru.shishmakov.config;
 
 public interface AppConfig {
 
-  String getSessionId();
+    String getSessionId();
 
-  String getConnectionHost();
+    String getConnectionHost();
 
-  Integer getConnectionPort();
+    Integer getConnectionPort();
 
-  String getConnectionUri();
+    String getConnectionUri();
 
-  String getDatabaseHost();
+    String getDatabaseHost();
 
-  Integer getDatabasePort();
+    Integer getDatabasePort();
 
-  String getDatabaseName();
+    String getDatabaseName();
 
-  String getDatabaseUser();
+    String getDatabaseUser();
 
-  String getDatabasePassword();
+    String getDatabasePassword();
 
-  String getBindHost();
+    String getBindHost();
 
-  Integer getBindPort();
+    Integer getBindPort();
 
 }

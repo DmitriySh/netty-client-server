@@ -33,7 +33,7 @@ public abstract class ServerChannelPipelineInitializer extends ChannelInitialize
 
     public abstract ChannelHandler getHttpResponseEncoder();
 
-    public abstract RequestProcessor getRequestProcessor() ;
+    public abstract RequestProcessor getRequestProcessor();
 
     public abstract EventExecutorGroup getEventExecutorGroup();
 

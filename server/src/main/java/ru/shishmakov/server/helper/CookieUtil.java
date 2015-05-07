@@ -18,17 +18,17 @@ import java.util.Collection;
  */
 public class CookieUtil {
 
-  /**
-   * Uses hash implementation from method {@link Cookie#hashCode()}.
-   *
-   * @param cookies the collection of HTTP Cookies.
-   * @return a hash code value for objects of {@link Cookie}.
-   */
-  public static int buildHash(final Collection<Cookie> cookies) {
-    int hash = 0;
-    for (Cookie cookie : cookies) {
-      hash += cookie.hashCode();
+    /**
+     * Uses hash implementation from method {@link Cookie#hashCode()}.
+     *
+     * @param cookies the collection of HTTP Cookies.
+     * @return a hash code value for objects of {@link Cookie}.
+     */
+    public static int buildHash(final Collection<Cookie> cookies) {
+        int hash = 0;
+        for (Cookie cookie : cookies) {
+            hash += cookie.hashCode();
+        }
+        return hash;
     }
-    return hash;
-  }
 }

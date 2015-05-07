@@ -5,32 +5,26 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import ru.shishmakov.client.Client;
 
 /**
  * @author Dmitriy Shishmakov
  * @see Client
  */
-@Component
-@Qualifier("clientChannelPipelineInitializer")
-public class ClientChannelPipelineInitializer extends ChannelInitializer<SocketChannel> {
+public abstract class ClientChannelPipelineInitializer extends ChannelInitializer<SocketChannel> {
 
-  @Autowired
-  private HttpClientCodec httpClientCodec;
-  @Autowired
-  private HttpObjectAggregator httpObjectAggregator;
-  @Autowired
-  private HttpClientProcessorHandler httpClientProcessorHandler;
+    @Override
+    public void initChannel(final SocketChannel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+        pipeline
+                .addLast("codec", getHttpClientCodec())
+                .addLast("aggregator", getHttpObjectAggregator())
+                .addLast("processor", getHttpClientProcessorHandler());
+    }
 
-  @Override
-  public void initChannel(final SocketChannel ch) throws Exception {
-    ChannelPipeline pipeline = ch.pipeline();
-    pipeline
-        .addLast("codec", httpClientCodec)
-        .addLast("aggregator", httpObjectAggregator)
-        .addLast("processor", httpClientProcessorHandler);
-  }
+    public abstract HttpClientCodec getHttpClientCodec();
+
+    public abstract HttpObjectAggregator getHttpObjectAggregator();
+
+    public abstract HttpClientProcessorHandler getHttpClientProcessorHandler();
 }

@@ -15,67 +15,67 @@ import org.springframework.core.env.Environment;
 @PropertySource("classpath:app.properties")
 public class CommonConfig {
 
-  @Autowired
-  private Environment environment;
+    @Autowired
+    private Environment environment;
 
-  @Bean
-  public AppConfig appConfig() {
-    return new AppConfig() {
-      @Override
-      public String getSessionId() {
-        return environment.getRequiredProperty(ConfigKey.SESSION_ID);
-      }
+    @Bean
+    public AppConfig appConfig() {
+        return new AppConfig() {
+            @Override
+            public String getSessionId() {
+                return environment.getRequiredProperty(ConfigKey.SESSION_ID);
+            }
 
-      @Override
-      public String getConnectionHost() {
-        return environment.getRequiredProperty(ConfigKey.CONNECT_HOST);
-      }
+            @Override
+            public String getConnectionHost() {
+                return environment.getRequiredProperty(ConfigKey.CONNECT_HOST);
+            }
 
-      @Override
-      public Integer getConnectionPort() {
-        return environment.getRequiredProperty(ConfigKey.CONNECT_PORT, Integer.class);
-      }
+            @Override
+            public Integer getConnectionPort() {
+                return environment.getRequiredProperty(ConfigKey.CONNECT_PORT, Integer.class);
+            }
 
-      @Override
-      public String getConnectionUri() {
-        return environment.getRequiredProperty(ConfigKey.CONNECT_URI);
-      }
+            @Override
+            public String getConnectionUri() {
+                return environment.getRequiredProperty(ConfigKey.CONNECT_URI);
+            }
 
-      @Override
-      public String getDatabaseHost() {
-        return environment.getRequiredProperty(ConfigKey.DATABASE_HOST);
-      }
+            @Override
+            public String getDatabaseHost() {
+                return environment.getRequiredProperty(ConfigKey.DATABASE_HOST);
+            }
 
-      @Override
-      public Integer getDatabasePort() {
-        return environment.getRequiredProperty(ConfigKey.DATABASE_PORT, Integer.class);
-      }
+            @Override
+            public Integer getDatabasePort() {
+                return environment.getRequiredProperty(ConfigKey.DATABASE_PORT, Integer.class);
+            }
 
-      @Override
-      public String getDatabaseName() {
-        return environment.getRequiredProperty(ConfigKey.DATABASE_NAME);
-      }
+            @Override
+            public String getDatabaseName() {
+                return environment.getRequiredProperty(ConfigKey.DATABASE_NAME);
+            }
 
-      @Override
-      public String getDatabaseUser() {
-        return environment.getRequiredProperty(ConfigKey.DATABASE_USER);
-      }
+            @Override
+            public String getDatabaseUser() {
+                return environment.getRequiredProperty(ConfigKey.DATABASE_USER);
+            }
 
-      @Override
-      public String getDatabasePassword() {
-        return environment.getRequiredProperty(ConfigKey.DATABASE_PASSWORD);
-      }
+            @Override
+            public String getDatabasePassword() {
+                return environment.getRequiredProperty(ConfigKey.DATABASE_PASSWORD);
+            }
 
-      @Override
-      public String getBindHost() {
-        return environment.getRequiredProperty(ConfigKey.BIND_HOST);
-      }
+            @Override
+            public String getBindHost() {
+                return environment.getRequiredProperty(ConfigKey.BIND_HOST);
+            }
 
-      @Override
-      public Integer getBindPort() {
-        return environment.getRequiredProperty(ConfigKey.BIND_PORT, Integer.class);
-      }
-    };
-  }
+            @Override
+            public Integer getBindPort() {
+                return environment.getRequiredProperty(ConfigKey.BIND_PORT, Integer.class);
+            }
+        };
+    }
 
 }

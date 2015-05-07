@@ -7,14 +7,14 @@ package ru.shishmakov.server.entity;
  */
 public class Client {
 
-  private Object sessionid;
-  private long quantity;
+    private Object sessionid;
+    private long quantity;
 
-  public Object getSessionid() {
-    return sessionid;
-  }
+    public Object getSessionid() {
+        return sessionid;
+    }
 
-  public long getQuantity() {
-    return quantity;
-  }
+    public long getQuantity() {
+        return quantity;
+    }
 }

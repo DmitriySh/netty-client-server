@@ -1,18 +1,13 @@
 package ru.shishmakov.client.config;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import ru.shishmakov.config.AppConfig;
+import org.springframework.context.annotation.*;
 import ru.shishmakov.config.CommonConfig;
 
 /**
@@ -23,34 +18,53 @@ import ru.shishmakov.config.CommonConfig;
 @Import(CommonConfig.class)
 public class ClientConfig {
 
-  @Autowired
-  private AppConfig config;
+    @Autowired
+    @Qualifier("httpClientProcessorHandler")
+    private HttpClientProcessorHandler httpClientProcessorHandler;
 
-  @Autowired
-  @Qualifier("clientChannelPipelineInitializer")
-  private ChannelInitializer channelPipelineInitializer;
+    @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
+    public NioEventLoopGroup processGroup() {
+        return new NioEventLoopGroup();
+    }
 
-  @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
-  public NioEventLoopGroup processGroup() {
-    return new NioEventLoopGroup();
-  }
+    @Bean
+    @Scope("prototype")
+    public HttpClientCodec httpClientCodec() {
+        return new HttpClientCodec();
+    }
 
-  @Bean
-  public HttpClientCodec httpClientCodec() {
-    return new HttpClientCodec();
-  }
+    @Bean
+    @Scope("prototype")
+    public HttpObjectAggregator httpObjectAggregator() {
+        return new HttpObjectAggregator(1048576);
+    }
 
-  @Bean
-  public HttpObjectAggregator httpObjectAggregator() {
-    return new HttpObjectAggregator(1048576);
-  }
+    @Bean(name = "clientChannelPipelineInitializer")
+    public ClientChannelPipelineInitializer channelPipelineInitializer() {
+        return new ClientChannelPipelineInitializer() {
+            @Override
+            public HttpClientCodec getHttpClientCodec() {
+                return httpClientCodec();
+            }
 
-  @Bean(name = "client")
-  public Bootstrap bootstrap() {
-    final Bootstrap client = new Bootstrap();
-    client.group(processGroup())
-        .channel(NioSocketChannel.class)
-        .handler(channelPipelineInitializer);
-    return client;
-  }
+            @Override
+            public HttpObjectAggregator getHttpObjectAggregator() {
+                return httpObjectAggregator();
+            }
+
+            @Override
+            public HttpClientProcessorHandler getHttpClientProcessorHandler() {
+                return httpClientProcessorHandler;
+            }
+        };
+    }
+
+    @Bean(name = "client")
+    public Bootstrap bootstrap() {
+        final Bootstrap client = new Bootstrap();
+        client.group(processGroup())
+                .channel(NioSocketChannel.class)
+                .handler(channelPipelineInitializer());
+        return client;
+    }
 }
