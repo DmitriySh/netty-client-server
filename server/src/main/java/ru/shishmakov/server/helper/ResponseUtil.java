@@ -38,10 +38,10 @@ public final class ResponseUtil {
     }
 
     public static FullHttpResponse buildResponseHttp200(final String pong, final Client client) {
-        final String uuid = (String) ((LinkedTreeMap) client.getSessionid()).get("$uuid");
+        final String uuid = (String) ((LinkedTreeMap) client.getProfileId()).get("$uuid");
         final Protocol protocol = new Protocol(pong);
         protocol.setContent(pong + " " + client.getQuantity());
-        protocol.setSessionid(uuid);
+        protocol.setProfileId(uuid);
         protocol.setStatus(HttpResponseStatus.OK.toString());
         return buildHttpResponse(protocol.toString(), HttpResponseStatus.OK);
     }

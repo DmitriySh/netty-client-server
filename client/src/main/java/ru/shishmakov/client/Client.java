@@ -30,7 +30,7 @@ public class Client {
     private final String host;
     private final int port;
     private final String uri;
-    private final String sessionId;
+    private final String profileId;
     private final Bootstrap client;
 
     public Client(final AnnotationConfigApplicationContext context) {
@@ -39,7 +39,7 @@ public class Client {
         this.host = config.getConnectionHost();
         this.port = config.getConnectionPort();
         this.uri = config.getConnectionUri();
-        this.sessionId = config.getSessionId();
+        this.profileId = config.getProfileId();
     }
 
     private void run() throws InterruptedException {
@@ -73,7 +73,7 @@ public class Client {
     private String buildJson() {
         final JsonObject json = new JsonObject();
         json.addProperty("action", "ping");
-        json.addProperty("sessionid", sessionId);
+        json.addProperty("profileid", profileId);
         return json.toString();
     }
 

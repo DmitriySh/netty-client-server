@@ -9,21 +9,21 @@ import com.google.gson.JsonObject;
  */
 public class Protocol {
 
-    private Object sessionid;
     private String action;
     private String content;
+    private Object profileid;
     private String status;
 
     public Protocol(String action) {
         this.action = action;
     }
 
-    public Object getSessionid() {
-        return sessionid;
+    public Object getProfileId() {
+        return profileid;
     }
 
-    public void setSessionid(Object sessionid) {
-        this.sessionid = sessionid;
+    public void setProfileId(Object profileid) {
+        this.profileid = profileid;
     }
 
     public String getAction() {
@@ -59,8 +59,8 @@ public class Protocol {
         if (content != null) {
             jsonObject.addProperty("content", content);
         }
-        if (sessionid != null) {
-            jsonObject.addProperty("sessionid", sessionid.toString());
+        if (profileid != null) {
+            jsonObject.addProperty("profileid", profileid.toString());
         }
         if (status != null) {
             jsonObject.addProperty("status", status);

@@ -22,8 +22,8 @@ public class CommonConfig {
     public AppConfig appConfig() {
         return new AppConfig() {
             @Override
-            public String getSessionId() {
-                return environment.getRequiredProperty(ConfigKey.SESSION_ID);
+            public String getProfileId() {
+                return environment.getRequiredProperty(ConfigKey.PROFILE_ID);
             }
 
             @Override
@@ -54,6 +54,11 @@ public class CommonConfig {
             @Override
             public String getDatabaseName() {
                 return environment.getRequiredProperty(ConfigKey.DATABASE_NAME);
+            }
+
+            @Override
+            public String getCollectionName() {
+                return environment.getRequiredProperty(ConfigKey.COLLECTION_NAME);
             }
 
             @Override

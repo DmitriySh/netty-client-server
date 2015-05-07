@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
-import ru.shishmakov.config.ConfigKey;
+import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.server.entity.Client;
 import ru.shishmakov.server.entity.Protocol;
 import ru.shishmakov.server.helper.DatabaseWorker;
@@ -44,6 +44,9 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
      * Protocol to send the messages
      */
     private static final String PONG = "pong";
+
+    @Autowired
+    private AppConfig config;
 
     @Autowired
     @Qualifier("mongoTemplate")
@@ -106,12 +109,11 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
      * @return quantity of requests from current client
      */
     private Client findClient(final Protocol protocol) {
-        final DBCollection collection = mongoTemplate.getCollection(ConfigKey.COLLECTION_NAME);
-
-        final Object sessionId = protocol.getSessionid();
-        if (sessionId == null) {
+        final DBCollection collection = mongoTemplate.getCollection(config.getCollectionName());
+        final Object profileId = protocol.getProfileId();
+        if (profileId == null) {
             // registration a new client
-            final DBObject data = QueryBuilder.start("sessionid").is(UUID.randomUUID()).and("quantity")
+            final DBObject data = QueryBuilder.start("profileid").is(UUID.randomUUID()).and("quantity")
                     .is(1).get();
             final WriteResult result = collection.insert(data);
             final String json = JSON.serialize(data);
@@ -119,10 +121,10 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
         }
 
         // create a finding query
-        final DBObject query = QueryBuilder.start("sessionid").is(UUID.fromString(sessionId.toString()))
+        final DBObject query = QueryBuilder.start("profileid").is(UUID.fromString(profileId.toString()))
                 .get();
         // create an ascending query
-        final DBObject sortQuery = new BasicDBObject("sessionid", 1);
+        final DBObject sortQuery = new BasicDBObject("profileid", 1);
         // create an increment query
         final DBObject updateQuery = new BasicDBObject("$inc", new BasicDBObject("quantity", 1));
         // remove the document specified in the query

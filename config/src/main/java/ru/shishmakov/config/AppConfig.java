@@ -3,7 +3,7 @@ package ru.shishmakov.config;
 
 public interface AppConfig {
 
-    String getSessionId();
+    String getProfileId();
 
     String getConnectionHost();
 
@@ -16,6 +16,8 @@ public interface AppConfig {
     Integer getDatabasePort();
 
     String getDatabaseName();
+
+    String getCollectionName();
 
     String getDatabaseUser();
 

@@ -7,11 +7,11 @@ package ru.shishmakov.server.entity;
  */
 public class Client {
 
-    private Object sessionid;
+    private Object profileid;
     private long quantity;
 
-    public Object getSessionid() {
-        return sessionid;
+    public Object getProfileId() {
+        return profileid;
     }
 
     public long getQuantity() {
