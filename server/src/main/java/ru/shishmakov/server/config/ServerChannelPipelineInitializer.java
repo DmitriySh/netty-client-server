@@ -1,16 +1,10 @@
 package ru.shishmakov.server.config;
 
-import io.netty.channel.ChannelInboundHandler;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.util.concurrent.EventExecutorGroup;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import ru.shishmakov.server.Server;
 
 /**
@@ -19,77 +13,31 @@ import ru.shishmakov.server.Server;
  * @author Dmitriy Shishmakov
  * @see Server
  */
-@Component
-@Qualifier("serverChannelPipelineInitializer")
-public class ServerChannelPipelineInitializer extends ChannelInitializer<SocketChannel> {
+public abstract class ServerChannelPipelineInitializer extends ChannelInitializer<SocketChannel> {
 
-  @Autowired
-  private HttpRequestDecoder httpRequestDecoder;
-  @Autowired
-  private HttpObjectAggregator httpObjectAggregator;
-  @Autowired
-  private HttpResponseEncoder httpResponseEncoder;
-  @Autowired
-  @Qualifier("requestProcessor")
-  private ChannelInboundHandler requestProcessor;
-  @Autowired
-  @Qualifier("databaseHandler")
-  private ChannelInboundHandler databaseHandler;
-  @Autowired
-  @Qualifier("responseSender")
-  private ChannelInboundHandler responseSender;
-  @Autowired
-  public EventExecutorGroup eventExecutorGroup;
+    @Override
+    protected void initChannel(final SocketChannel ch) throws Exception {
+        final ChannelPipeline pipeline = ch.pipeline();
+        pipeline
+                .addLast("decoder", getHttpRequestDecoder())
+                .addLast("aggregator", getHttpObjectAggregator())
+                .addLast("encoder", getHttpResponseEncoder())
+                .addLast("processor", getRequestProcessor())
+                .addAfter(getEventExecutorGroup(), "processor", "database", getDatabaseHandler())
+                .addAfter("database", "sender", getResponseSender());
+    }
 
-  public void setHttpRequestDecoder(final HttpRequestDecoder httpRequestDecoder) {
-    this.httpRequestDecoder = httpRequestDecoder;
-  }
+    public abstract ChannelHandler getHttpRequestDecoder();
 
-  public void setHttpObjectAggregator(final HttpObjectAggregator httpObjectAggregator) {
-    this.httpObjectAggregator = httpObjectAggregator;
-  }
+    public abstract ChannelHandler getHttpObjectAggregator();
 
-  public void setHttpResponseEncoder(final HttpResponseEncoder httpResponseEncoder) {
-    this.httpResponseEncoder = httpResponseEncoder;
-  }
+    public abstract ChannelHandler getHttpResponseEncoder();
 
-  public void setRequestProcessor(final RequestProcessor requestProcessor) {
-    this.requestProcessor = requestProcessor;
-  }
+    public abstract RequestProcessor getRequestProcessor() ;
 
-  public void setDatabaseHandler(final DatabaseHandler databaseHandler) {
-    this.databaseHandler = databaseHandler;
-  }
+    public abstract EventExecutorGroup getEventExecutorGroup();
 
-  public void setResponseSender(final ResponseSender responseSender) {
-    this.responseSender = responseSender;
-  }
+    public abstract DatabaseHandler getDatabaseHandler();
 
-  public void setResponseSender(final ChannelInboundHandler responseSender) {
-    this.responseSender = responseSender;
-  }
-
-  public void setRequestProcessor(final ChannelInboundHandler requestProcessor) {
-    this.requestProcessor = requestProcessor;
-  }
-
-  public void setDatabaseHandler(final ChannelInboundHandler databaseHandler) {
-    this.databaseHandler = databaseHandler;
-  }
-
-  public void setEventExecutorGroup(final EventExecutorGroup eventExecutorGroup) {
-    this.eventExecutorGroup = eventExecutorGroup;
-  }
-
-  @Override
-  protected void initChannel(final SocketChannel ch) throws Exception {
-    final ChannelPipeline pipeline = ch.pipeline();
-    pipeline
-        .addLast("decoder", httpRequestDecoder)
-        .addLast("aggregator", httpObjectAggregator)
-        .addLast("encoder", httpResponseEncoder)
-        .addLast("processor", requestProcessor)
-        .addAfter(eventExecutorGroup, "processor", "database", databaseHandler)
-        .addAfter("database", "sender", responseSender);
-  }
+    public abstract ResponseSender getResponseSender();
 }

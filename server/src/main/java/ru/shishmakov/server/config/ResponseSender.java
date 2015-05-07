@@ -2,6 +2,7 @@ package ru.shishmakov.server.config;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
@@ -24,31 +25,32 @@ import java.nio.charset.StandardCharsets;
  */
 @Component
 @Qualifier("responseSender")
+@Sharable
 public class ResponseSender extends ChannelInboundHandlerAdapter {
 
-  private static final Logger logger = LoggerFactory.getLogger(MethodHandles
-      .lookup().lookupClass());
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles
+            .lookup().lookupClass());
 
-  @Override
-  public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
-    logger.error("Fail at handler: " + cause.getMessage(), cause);
-    ctx.close();
-  }
-
-  @Override
-  public void channelReadComplete(final ChannelHandlerContext ctx) {
-    ctx.flush();
-  }
-
-  @Override
-  public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-    if (!(msg instanceof ResponseWorker)) {
-      return;
+    @Override
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
+        logger.error("Fail at handler: " + cause.getMessage(), cause);
+        ctx.close();
     }
-    final ResponseWorker worker = (ResponseWorker) msg;
-    final FullHttpResponse response = worker.getWorker();
-    logger.debug("Sent the data:{}", response.content().toString(StandardCharsets.UTF_8));
-    ctx.write(response);
-    ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
-  }
+
+    @Override
+    public void channelReadComplete(final ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
+
+    @Override
+    public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
+        if (!(msg instanceof ResponseWorker)) {
+            return;
+        }
+        final ResponseWorker worker = (ResponseWorker) msg;
+        final FullHttpResponse response = worker.getWorker();
+        logger.debug("Sent the data:{}", response.content().toString(StandardCharsets.UTF_8));
+        ctx.write(response);
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+    }
 }
