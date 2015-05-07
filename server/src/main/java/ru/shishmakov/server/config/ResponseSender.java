@@ -2,15 +2,12 @@ package ru.shishmakov.server.config;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import ru.shishmakov.server.helper.ResponseWorker;
 
 import java.lang.invoke.MethodHandles;
@@ -23,9 +20,6 @@ import java.nio.charset.StandardCharsets;
  * @author Dmitriy Shishmakov
  * @see ServerChannelPipelineInitializer
  */
-@Component
-@Qualifier("responseSender")
-@Sharable
 public class ResponseSender extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles

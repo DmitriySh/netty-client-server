@@ -1,7 +1,6 @@
 package ru.shishmakov.server.config;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
@@ -10,8 +9,6 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import ru.shishmakov.server.helper.DatabaseWorker;
 import ru.shishmakov.server.helper.ResponseUtil;
 import ru.shishmakov.server.helper.ResponseWorker;
@@ -25,9 +22,6 @@ import java.nio.charset.StandardCharsets;
  * @author Dmitriy Shishmakov
  * @see ServerChannelPipelineInitializer
  */
-@Component()
-@Qualifier("requestProcessor")
-@Sharable
 public class RequestProcessor extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles

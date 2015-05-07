@@ -3,7 +3,6 @@ package ru.shishmakov.server.config;
 import com.google.gson.Gson;
 import com.mongodb.*;
 import com.mongodb.util.JSON;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.stereotype.Component;
 import ru.shishmakov.config.ConfigKey;
 import ru.shishmakov.server.entity.Client;
 import ru.shishmakov.server.entity.Protocol;
@@ -34,9 +32,6 @@ import java.util.UUID;
  * @author Dmitriy Shishmakov
  * @see ServerChannelPipelineInitializer
  */
-@Component
-@Qualifier("databaseHandler")
-@Sharable
 public class DatabaseHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles

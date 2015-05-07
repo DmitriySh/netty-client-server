@@ -55,7 +55,6 @@ public class Client {
                 request.getProtocolVersion(), json);
         clientChannel.closeFuture().sync();
         logger.warn("Client to close the connection: {}", Client.class.getSimpleName());
-
     }
 
     private FullHttpRequest buildFullHttpRequest(final String json) {

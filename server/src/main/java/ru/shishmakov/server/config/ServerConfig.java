@@ -13,8 +13,10 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import ru.shishmakov.config.AppConfig;
@@ -26,24 +28,29 @@ import java.net.UnknownHostException;
  * Extension of configuration for Server
  */
 @Configuration
-@ComponentScan(basePackageClasses = PackageMarker.class)
 @Import(CommonConfig.class)
 public class ServerConfig {
 
     @Autowired
     private AppConfig config;
 
-    @Autowired
-    @Qualifier("requestProcessor")
-    private RequestProcessor requestProcessor;
+    @Bean
+    @Scope("prototype")
+    public ResponseSender responseSender() {
+        return new ResponseSender();
+    }
 
-    @Autowired
-    @Qualifier("databaseHandler")
-    private DatabaseHandler databaseHandler;
+    @Bean
+    @Scope("prototype")
+    public RequestProcessor requestProcessor() {
+        return new RequestProcessor();
+    }
 
-    @Autowired
-    @Qualifier("responseSender")
-    private ResponseSender responseSender;
+    @Bean
+    @Scope("prototype")
+    public DatabaseHandler databaseHandler() {
+        return new DatabaseHandler();
+    }
 
     @Bean
     @Scope("prototype")
@@ -104,17 +111,17 @@ public class ServerConfig {
 
             @Override
             public RequestProcessor getRequestProcessor() {
-                return requestProcessor;
+                return requestProcessor();
             }
 
             @Override
             public DatabaseHandler getDatabaseHandler() {
-                return databaseHandler;
+                return databaseHandler();
             }
 
             @Override
             public ResponseSender getResponseSender() {
-                return responseSender;
+                return responseSender();
             }
         };
     }
