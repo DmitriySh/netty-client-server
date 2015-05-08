@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
 import ru.shishmakov.config.AppConfig;
-import ru.shishmakov.server.entity.Client;
+import ru.shishmakov.server.entity.Profile;
 import ru.shishmakov.server.entity.Protocol;
 import ru.shishmakov.server.helper.DatabaseWorker;
 import ru.shishmakov.server.helper.ResponseUtil;
@@ -84,8 +84,8 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        final Client client = findClient(protocol);
-        final FullHttpResponse response = ResponseUtil.buildResponseHttp200(PONG, client);
+        final Profile profile = findClient(protocol);
+        final FullHttpResponse response = ResponseUtil.buildResponseHttp200(PONG, profile);
         // pushed to the next channel
         ctx.fireChannelRead(new ResponseWorker(response));
     }
@@ -108,7 +108,7 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
      * @param protocol instance of {@link Protocol}
      * @return quantity of requests from current client
      */
-    private Client findClient(final Protocol protocol) {
+    private Profile findClient(final Protocol protocol) {
         final DBCollection collection = mongoTemplate.getCollection(config.getCollectionName());
         final Object profileId = protocol.getProfileId();
         if (profileId == null) {
@@ -117,7 +117,7 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
                     .is(1).get();
             final WriteResult result = collection.insert(data);
             final String json = JSON.serialize(data);
-            return new Gson().fromJson(json, Client.class);
+            return new Gson().fromJson(json, Profile.class);
         }
 
         // create a finding query
@@ -139,7 +139,7 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
                 .findAndModify(query, fields, sortQuery, remove, updateQuery, returnNew, upsert);
 
         final String json = JSON.serialize(dbObject);
-        return new Gson().fromJson(json, Client.class);
+        return new Gson().fromJson(json, Profile.class);
     }
 
     private Protocol buildFromJson(final FullHttpRequest request) {

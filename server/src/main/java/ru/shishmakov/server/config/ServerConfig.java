@@ -2,6 +2,7 @@ package ru.shishmakov.server.config;
 
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -18,7 +19,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.authentication.UserCredentials;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.config.CommonConfig;
 
@@ -136,6 +140,22 @@ public class ServerConfig {
         return server;
     }
 
+    @Bean
+    public MongoDbFactory mongoDbFactory() throws Exception {
+        final String user = config.getDatabaseUser();
+        final String password = config.getDatabasePassword();
+        final String databaseName = config.getDatabaseName();
+        final UserCredentials userCredentials = new UserCredentials(user, password);
+        return new SimpleMongoDbFactory(mongo(), databaseName, userCredentials);
+    }
+
+    @Bean
+    public MappingMongoConverter mappingMongoConverter() throws Exception {
+        MappingMongoConverter mmc = super.mappingMongoConverter();
+        mmc.setTypeMapper(customTypeMapper());
+        return mmc;
+    }
+
     /**
      * The MongoClient class is designed to be <u>thread-safe</u> and shared among threads.
      */
@@ -143,7 +163,9 @@ public class ServerConfig {
     public MongoClient mongo() throws UnknownHostException {
         final String host = config.getDatabaseHost();
         final Integer port = config.getDatabasePort();
-        return new MongoClient(new ServerAddress(host, port));
+        final MongoClient mongoClient = new MongoClient(new ServerAddress(host, port));
+        mongoClient.setWriteConcern(WriteConcern.SAFE);
+        return mongoClient;
     }
 
     /**
@@ -153,10 +175,6 @@ public class ServerConfig {
      */
     @Bean(name = "mongoTemplate")
     public MongoTemplate mongoTemplate() throws Exception {
-        final String user = config.getDatabaseUser();
-        final String password = config.getDatabasePassword();
-        final String databaseName = config.getDatabaseName();
-        final UserCredentials userCredentials = new UserCredentials(user, password);
-        return new MongoTemplate(mongo(), databaseName, userCredentials);
+        return new MongoTemplate(mongoDbFactory(), mappingMongoConverter());
     }
 }

@@ -4,7 +4,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
-import ru.shishmakov.server.entity.Client;
+import ru.shishmakov.server.entity.Profile;
 import ru.shishmakov.server.entity.Protocol;
 
 import java.nio.charset.StandardCharsets;
@@ -37,10 +37,10 @@ public final class ResponseUtil {
         return buildHttpResponse(json, status);
     }
 
-    public static FullHttpResponse buildResponseHttp200(final String pong, final Client client) {
-        final String uuid = (String) ((LinkedTreeMap) client.getProfileId()).get("$uuid");
+    public static FullHttpResponse buildResponseHttp200(final String pong, final Profile profile) {
+        final String uuid = (String) ((LinkedTreeMap) profile.getProfileId()).get("$uuid");
         final Protocol protocol = new Protocol(pong);
-        protocol.setContent(pong + " " + client.getQuantity());
+        protocol.setContent(pong + " " + profile.getQuantity());
         protocol.setProfileId(uuid);
         protocol.setStatus(HttpResponseStatus.OK.toString());
         return buildHttpResponse(protocol.toString(), HttpResponseStatus.OK);
