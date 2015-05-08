@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
@@ -33,7 +34,7 @@ import java.net.UnknownHostException;
  */
 @Configuration
 @Import(CommonConfig.class)
-public class ServerConfig {
+public class ServerConfig extends AbstractMongoConfiguration{
 
     @Autowired
     private AppConfig config;
@@ -141,19 +142,18 @@ public class ServerConfig {
     }
 
     @Bean
-    public MongoDbFactory mongoDbFactory() throws Exception {
-        final String user = config.getDatabaseUser();
-        final String password = config.getDatabasePassword();
-        final String databaseName = config.getDatabaseName();
-        final UserCredentials userCredentials = new UserCredentials(user, password);
-        return new SimpleMongoDbFactory(mongo(), databaseName, userCredentials);
-    }
-
-    @Bean
     public MappingMongoConverter mappingMongoConverter() throws Exception {
-        MappingMongoConverter mmc = super.mappingMongoConverter();
+        final MappingMongoConverter mmc = super.mappingMongoConverter();
         mmc.setTypeMapper(customTypeMapper());
         return mmc;
+    }
+
+    /**
+     * Return the name of the database to connect to.
+     */
+    @Override
+    protected String getDatabaseName() {
+        return config.getDatabaseName();
     }
 
     /**
@@ -166,6 +166,18 @@ public class ServerConfig {
         final MongoClient mongoClient = new MongoClient(new ServerAddress(host, port));
         mongoClient.setWriteConcern(WriteConcern.SAFE);
         return mongoClient;
+    }
+
+    /**
+     * Creates a {@link MongoDbFactory} to be used by the {@link MongoTemplate}.
+     */
+    @Bean
+    @Override
+    public MongoDbFactory mongoDbFactory() throws Exception {
+        final String user = config.getDatabaseUser();
+        final String password = config.getDatabasePassword();
+        final UserCredentials userCredentials = new UserCredentials(user, password);
+        return new SimpleMongoDbFactory(mongo(), getDatabaseName(), userCredentials);
     }
 
     /**
