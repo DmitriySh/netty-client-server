@@ -18,23 +18,28 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.CustomConversions;
 import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.config.CommonConfig;
+import ru.shishmakov.server.helper.BinaryConverterToUuid;
+import ru.shishmakov.server.helper.UuidToBinaryConverter;
 
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Extension of configuration for Server
  */
 @Configuration
 @Import(CommonConfig.class)
-public class ServerConfig extends AbstractMongoConfiguration{
+public class ServerConfig extends AbstractMongoConfiguration {
 
     @Autowired
     private AppConfig config;
@@ -141,11 +146,16 @@ public class ServerConfig extends AbstractMongoConfiguration{
         return server;
     }
 
+    /**
+     * Register custom {@link Converter} types in a {@link CustomConversions} object
+     */
     @Bean
-    public MappingMongoConverter mappingMongoConverter() throws Exception {
-        final MappingMongoConverter mmc = super.mappingMongoConverter();
-        mmc.setTypeMapper(customTypeMapper());
-        return mmc;
+    @Override
+    public CustomConversions customConversions() {
+        // todo: StringToDBObjectConverter ???
+        final List<?> converters = Arrays.asList(BinaryConverterToUuid.INSTANCE,
+                UuidToBinaryConverter.INSTANCE);
+        return new CustomConversions(converters);
     }
 
     /**
@@ -185,7 +195,8 @@ public class ServerConfig extends AbstractMongoConfiguration{
      * for MongoDB documents and provides a mapping between your domain objects and MongoDB documents.
      * MongoTemplate is <u>thread-safe</u> and can be reused across multiple instances.
      */
-    @Bean(name = "mongoTemplate")
+    @Bean
+    @Override
     public MongoTemplate mongoTemplate() throws Exception {
         return new MongoTemplate(mongoDbFactory(), mappingMongoConverter());
     }

@@ -1,8 +1,7 @@
-package ru.shishmakov.server.config;
+package ru.shishmakov.server.helper;
 
 import org.bson.types.Binary;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.UUID;
@@ -10,8 +9,8 @@ import java.util.UUID;
 /**
  * Simple singleton to convert {@link Binary}s to their {@link UUID} representation.
  */
-@Component
-public class BinaryConverterToUUID implements Converter<Binary, UUID> {
+public enum BinaryConverterToUuid implements Converter<Binary, UUID> {
+    INSTANCE;
 
     @Override
     public UUID convert(final Binary source) {

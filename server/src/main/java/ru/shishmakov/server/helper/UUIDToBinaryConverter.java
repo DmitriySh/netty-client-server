@@ -1,4 +1,4 @@
-package ru.shishmakov.server.config;
+package ru.shishmakov.server.helper;
 
 import org.bson.BSON;
 import org.bson.types.Binary;
@@ -12,8 +12,8 @@ import java.util.UUID;
 /**
  * Simple singleton to convert {@link UUID}s to their {@link Binary} representation.
  */
-@Component
-public class UUIDToBinaryConverter implements Converter<UUID, Binary> {
+public enum UuidToBinaryConverter implements Converter<UUID, Binary> {
+    INSTANCE;
 
     @Override
     public Binary convert(final UUID source) {
