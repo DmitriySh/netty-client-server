@@ -1,4 +1,4 @@
-package ru.shishmakov.server.config;
+package ru.shishmakov.server.core;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;

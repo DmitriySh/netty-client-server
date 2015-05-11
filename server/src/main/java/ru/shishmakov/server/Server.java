@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import ru.shishmakov.config.AppConfig;
-import ru.shishmakov.server.config.ServerConfig;
+import ru.shishmakov.server.core.ServerConfig;
 
 import java.lang.invoke.MethodHandles;
 

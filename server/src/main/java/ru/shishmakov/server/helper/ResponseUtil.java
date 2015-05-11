@@ -1,6 +1,5 @@
 package ru.shishmakov.server.helper;
 
-import com.google.gson.internal.LinkedTreeMap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
@@ -8,6 +7,7 @@ import ru.shishmakov.server.entity.Profile;
 import ru.shishmakov.server.entity.Protocol;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 /**
  * Utility class for preparing HTTP Response
@@ -24,8 +24,7 @@ public final class ResponseUtil {
         final Protocol protocol = new Protocol("error");
         protocol.setContent("Ping Pong server can not parse " + content + " of the request");
         protocol.setStatus(String.valueOf(status));
-        final String json = protocol.toString();
-        return buildHttpResponse(json, status);
+        return buildHttpResponse(protocol.toString(), status);
     }
 
     public static FullHttpResponse buildAuthorResponseHttp200() {
@@ -33,12 +32,11 @@ public final class ResponseUtil {
         final Protocol protocol = new Protocol("author");
         protocol.setContent("Dmitriy Shishmakov, https://github.com/DmitriySh");
         protocol.setStatus(String.valueOf(status));
-        final String json = protocol.toString();
-        return buildHttpResponse(json, status);
+        return buildHttpResponse(protocol.toString(), status);
     }
 
     public static FullHttpResponse buildResponseHttp200(final String pong, final Profile profile) {
-        final String uuid = (String) ((LinkedTreeMap) profile.getProfileId()).get("$uuid");
+        final UUID uuid = profile.getProfileId();
         final Protocol protocol = new Protocol(pong);
         protocol.setContent(pong + " " + profile.getQuantity());
         protocol.setProfileId(uuid);
@@ -51,8 +49,7 @@ public final class ResponseUtil {
         final Protocol protocol = new Protocol("error");
         protocol.setContent("Ping Pong server failure");
         protocol.setStatus(String.valueOf(status));
-        final String json = protocol.toString();
-        return buildHttpResponse(json, status);
+        return buildHttpResponse(protocol.toString(), status);
     }
 
     private static FullHttpResponse buildHttpResponse(final String data,

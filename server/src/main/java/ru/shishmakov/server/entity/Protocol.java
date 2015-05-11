@@ -2,6 +2,8 @@ package ru.shishmakov.server.entity;
 
 import com.google.gson.JsonObject;
 
+import java.util.UUID;
+
 /**
  * The main protocol of transfer between client and server.
  *
@@ -11,19 +13,19 @@ public class Protocol {
 
     private String action;
     private String content;
-    private Object profileid;
+    private UUID profileId;
     private String status;
 
     public Protocol(String action) {
         this.action = action;
     }
 
-    public Object getProfileId() {
-        return profileid;
+    public UUID getProfileId() {
+        return profileId;
     }
 
-    public void setProfileId(Object profileid) {
-        this.profileid = profileid;
+    public void setProfileId(UUID profileid) {
+        this.profileId = profileid;
     }
 
     public String getAction() {
@@ -59,8 +61,8 @@ public class Protocol {
         if (content != null) {
             jsonObject.addProperty("content", content);
         }
-        if (profileid != null) {
-            jsonObject.addProperty("profileid", profileid.toString());
+        if (profileId != null) {
+            jsonObject.addProperty("profileid", profileId.toString());
         }
         if (status != null) {
             jsonObject.addProperty("status", status);

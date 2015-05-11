@@ -1,4 +1,4 @@
-package ru.shishmakov.server.config;
+package ru.shishmakov.server.core;
 
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -14,10 +14,8 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.*;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.mongodb.MongoDbFactory;
@@ -25,10 +23,14 @@ import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
+import org.springframework.data.mongodb.core.mapping.Document;
 import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.config.CommonConfig;
+import ru.shishmakov.server.dao.PackageMarkerRepository;
+import ru.shishmakov.server.entity.Profile;
 import ru.shishmakov.server.helper.BinaryConverterToUuid;
 import ru.shishmakov.server.helper.UuidToBinaryConverter;
+import ru.shishmakov.server.service.PackageMarkerService;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -39,43 +41,44 @@ import java.util.List;
  */
 @Configuration
 @Import(CommonConfig.class)
+@ComponentScan(basePackageClasses = {PackageMarkerService.class, PackageMarkerRepository.class})
 public class ServerConfig extends AbstractMongoConfiguration {
 
     @Autowired
     private AppConfig config;
 
     @Bean
-    @Scope("prototype")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public ResponseSender responseSender() {
         return new ResponseSender();
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public RequestProcessor requestProcessor() {
         return new RequestProcessor();
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DatabaseHandler databaseHandler() {
         return new DatabaseHandler();
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public HttpRequestDecoder httpRequestDecoder() {
         return new HttpRequestDecoder();
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public HttpObjectAggregator httpObjectAggregator() {
         return new HttpObjectAggregator(1048576);
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public HttpResponseEncoder httpResponseEncoder() {
         return new HttpResponseEncoder();
     }
@@ -167,9 +170,18 @@ public class ServerConfig extends AbstractMongoConfiguration {
     }
 
     /**
+     * Return the base package to scan classes for mapped {@link Document} annotations.
+     */
+    @Override
+    protected String getMappingBasePackage() {
+        final Package mappingPackage = Profile.class.getPackage();
+        return mappingPackage == null ? null : mappingPackage.getName();
+    }
+
+    /**
      * The MongoClient class is designed to be <u>thread-safe</u> and shared among threads.
      */
-    @Bean(name = "mongo", destroyMethod = "close")
+    @Bean(destroyMethod = "close")
     public MongoClient mongo() throws UnknownHostException {
         final String host = config.getDatabaseHost();
         final Integer port = config.getDatabasePort();
@@ -195,7 +207,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
      * for MongoDB documents and provides a mapping between your domain objects and MongoDB documents.
      * MongoTemplate is <u>thread-safe</u> and can be reused across multiple instances.
      */
-    @Bean
+    @Bean(name = "serverMongoTemplate")
     @Override
     public MongoTemplate mongoTemplate() throws Exception {
         return new MongoTemplate(mongoDbFactory(), mappingMongoConverter());
