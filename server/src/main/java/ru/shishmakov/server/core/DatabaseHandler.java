@@ -1,10 +1,7 @@
 package ru.shishmakov.server.core;
 
 import com.google.gson.Gson;
-import com.mongodb.*;
-import com.mongodb.util.JSON;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -17,7 +14,6 @@ import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.server.entity.Profile;
 import ru.shishmakov.server.entity.Protocol;
 import ru.shishmakov.server.helper.DatabaseWorker;
-import ru.shishmakov.server.helper.ResponseUtil;
 import ru.shishmakov.server.helper.ResponseWorker;
 import ru.shishmakov.server.service.DbService;
 
@@ -32,7 +28,7 @@ import java.util.UUID;
  * @author Dmitriy Shishmakov
  * @see ServerChannelPipelineInitializer
  */
-public class DatabaseHandler extends ChannelInboundHandlerAdapter {
+public class DatabaseHandler extends HttpResponse {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
@@ -78,14 +74,14 @@ public class DatabaseHandler extends ChannelInboundHandlerAdapter {
         final FullHttpRequest request = ((DatabaseWorker) msg).getWorker();
         final Protocol protocol = buildFromJson(request);
         if (!PING.equalsIgnoreCase(protocol.getAction())) {
-            final FullHttpResponse response = ResponseUtil.buildResponseHttp400("protocol");
+            final FullHttpResponse response = this.buildResponseHttp400("protocol");
             // pushed to the next channel
             ctx.fireChannelRead(new ResponseWorker(response));
             return;
         }
 
         final Profile profile = findProfile(protocol);
-        final FullHttpResponse response = ResponseUtil.buildResponseHttp200(PONG, profile);
+        final FullHttpResponse response = this.buildResponseHttp200(PONG, profile);
         // pushed to the next channel
         ctx.fireChannelRead(new ResponseWorker(response));
     }

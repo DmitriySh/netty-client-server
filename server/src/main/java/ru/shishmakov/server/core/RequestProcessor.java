@@ -2,7 +2,6 @@ package ru.shishmakov.server.core;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -10,7 +9,6 @@ import io.netty.handler.codec.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.shishmakov.server.helper.DatabaseWorker;
-import ru.shishmakov.server.helper.ResponseUtil;
 import ru.shishmakov.server.helper.ResponseWorker;
 
 import java.lang.invoke.MethodHandles;
@@ -22,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  * @author Dmitriy Shishmakov
  * @see ServerChannelPipelineInitializer
  */
-public class RequestProcessor extends ChannelInboundHandlerAdapter {
+public class RequestProcessor extends HttpResponse {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
@@ -55,7 +53,7 @@ public class RequestProcessor extends ChannelInboundHandlerAdapter {
         }
         final FullHttpRequest httpRequest = (FullHttpRequest) msg;
         if (!HttpMethod.POST.equals((httpRequest).getMethod())) {
-            final FullHttpResponse response = ResponseUtil.buildResponseHttp405();
+            final FullHttpResponse response = this.buildResponseHttp405();
             fireResponseChannel(ctx, response);
             return;
         }
@@ -68,12 +66,12 @@ public class RequestProcessor extends ChannelInboundHandlerAdapter {
                 break;
             }
             case AUTHOR_URI: {
-                final FullHttpResponse response = ResponseUtil.buildAuthorResponseHttp200();
+                final FullHttpResponse response = this.buildAuthorResponseHttp200();
                 fireResponseChannel(ctx, response);
                 break;
             }
             default: {
-                final FullHttpResponse response = ResponseUtil.buildResponseHttp400("uri");
+                final FullHttpResponse response = this.buildResponseHttp400("uri");
                 fireResponseChannel(ctx, response);
                 break;
             }

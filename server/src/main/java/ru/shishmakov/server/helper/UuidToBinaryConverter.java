@@ -3,7 +3,6 @@ package ru.shishmakov.server.helper;
 import org.bson.BSON;
 import org.bson.types.Binary;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

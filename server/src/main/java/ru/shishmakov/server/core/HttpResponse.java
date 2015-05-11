@@ -1,7 +1,8 @@
-package ru.shishmakov.server.helper;
+package ru.shishmakov.server.core;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import ru.shishmakov.server.entity.Profile;
 import ru.shishmakov.server.entity.Protocol;
@@ -14,12 +15,9 @@ import java.util.UUID;
  *
  * @author Dmitriy Shishmakov
  */
-public final class ResponseUtil {
+public abstract class HttpResponse extends ChannelInboundHandlerAdapter {
 
-    private ResponseUtil() {
-    }
-
-    public static FullHttpResponse buildResponseHttp400(final String content) {
+    public FullHttpResponse buildResponseHttp400(final String content) {
         final HttpResponseStatus status = HttpResponseStatus.BAD_REQUEST;
         final Protocol protocol = new Protocol("error");
         protocol.setContent("Ping Pong server can not parse " + content + " of the request");
@@ -27,7 +25,7 @@ public final class ResponseUtil {
         return buildHttpResponse(protocol.toString(), status);
     }
 
-    public static FullHttpResponse buildAuthorResponseHttp200() {
+    public FullHttpResponse buildAuthorResponseHttp200() {
         final HttpResponseStatus status = HttpResponseStatus.OK;
         final Protocol protocol = new Protocol("author");
         protocol.setContent("Dmitriy Shishmakov, https://github.com/DmitriySh");
@@ -35,7 +33,7 @@ public final class ResponseUtil {
         return buildHttpResponse(protocol.toString(), status);
     }
 
-    public static FullHttpResponse buildResponseHttp200(final String pong, final Profile profile) {
+    public FullHttpResponse buildResponseHttp200(final String pong, final Profile profile) {
         final UUID uuid = profile.getProfileId();
         final Protocol protocol = new Protocol(pong);
         protocol.setContent(pong + " " + profile.getQuantity());
@@ -44,7 +42,7 @@ public final class ResponseUtil {
         return buildHttpResponse(protocol.toString(), HttpResponseStatus.OK);
     }
 
-    public static FullHttpResponse buildResponseHttp405() {
+    public FullHttpResponse buildResponseHttp405() {
         final HttpResponseStatus status = HttpResponseStatus.METHOD_NOT_ALLOWED;
         final Protocol protocol = new Protocol("error");
         protocol.setContent("Ping Pong server failure");
