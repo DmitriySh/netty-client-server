@@ -77,20 +77,32 @@ public class ServerConfig extends AbstractMongoConfiguration {
         return new HttpResponseEncoder();
     }
 
-    @Bean(name = "bootGroup", destroyMethod = "shutdownGracefully")
+    @Bean(name = "bootGroup", destroyMethod = "close")
     public NioEventLoopGroup bootGroup() {
-        return new NioEventLoopGroup(1);
+        return new NioEventLoopGroup(1){
+            public void close() {
+                super.shutdownGracefully().awaitUninterruptibly();
+            }
+        };
     }
 
-    @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
+    @Bean(name = "processGroup", destroyMethod = "close")
     public NioEventLoopGroup processGroup() {
-        return new NioEventLoopGroup();
+        return new NioEventLoopGroup(){
+            public void close() {
+                super.shutdownGracefully().awaitUninterruptibly();
+            }
+        };
     }
 
-    @Bean(name = "eventExecutorGroup", destroyMethod = "shutdownGracefully")
+    @Bean(name = "eventExecutorGroup", destroyMethod = "close")
     public EventExecutorGroup eventExecutorGroup() {
         final int countThreads = Runtime.getRuntime().availableProcessors() * 2;
-        return new DefaultEventExecutorGroup(countThreads);
+        return new DefaultEventExecutorGroup(countThreads){
+            public void close() {
+                super.shutdownGracefully().awaitUninterruptibly();
+            }
+        };
     }
 
     @Bean(name = "serverChannelPipelineInitializer")
