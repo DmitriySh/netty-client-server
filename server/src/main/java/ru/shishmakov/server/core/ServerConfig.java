@@ -28,8 +28,8 @@ import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.config.CommonConfig;
 import ru.shishmakov.server.dao.PackageMarkerRepository;
 import ru.shishmakov.server.entity.Profile;
-import ru.shishmakov.server.helper.BinaryConverterToUuid;
-import ru.shishmakov.server.helper.UuidToBinaryConverter;
+import ru.shishmakov.server.helper.BinaryConverterTo2UUID;
+import ru.shishmakov.server.helper.UUID2ToBinaryConverter;
 import ru.shishmakov.server.service.PackageMarkerService;
 
 import java.net.UnknownHostException;
@@ -156,8 +156,8 @@ public class ServerConfig extends AbstractMongoConfiguration {
     @Override
     public CustomConversions customConversions() {
         // todo: StringToDBObjectConverter ???
-        final List<?> converters = Arrays.asList(BinaryConverterToUuid.INSTANCE,
-                UuidToBinaryConverter.INSTANCE);
+        final List<?> converters = Arrays.asList(BinaryConverterTo2UUID.INSTANCE,
+                UUID2ToBinaryConverter.INSTANCE);
         return new CustomConversions(converters);
     }
 
