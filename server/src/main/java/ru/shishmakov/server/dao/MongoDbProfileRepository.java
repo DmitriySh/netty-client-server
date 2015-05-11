@@ -16,6 +16,8 @@ import java.util.UUID;
 
 /**
  * Captures the domain type {@link Profile} to manage by Mongo DB.
+ *
+ * @author Dmitriy Shishmakov
  */
 @Repository("mongoRepository")
 public class MongoDbProfileRepository implements DbRepository<Profile, UUID> {

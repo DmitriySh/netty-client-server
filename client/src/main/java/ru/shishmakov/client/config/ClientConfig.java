@@ -12,6 +12,8 @@ import ru.shishmakov.config.CommonConfig;
 
 /**
  * Extension of configuration for Client
+ *
+ * @author Dmitriy Shishmakov
  */
 @Configuration
 @ComponentScan(basePackageClasses = PackageMarker.class)

@@ -3,6 +3,11 @@ package ru.shishmakov.server.service;
 
 import java.io.Serializable;
 
+/**
+ * @param <T>  type of entity
+ * @param <ID> identifier of current entity
+ * @author Dmitriy Shishmakov
+ */
 public interface DbService<T, ID extends Serializable> {
 
     /**

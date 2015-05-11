@@ -32,6 +32,8 @@ import java.net.UnknownHostException;
 
 /**
  * Extension of configuration for Server
+ *
+ * @author Dmitriy Shishmakov
  */
 @Configuration
 @Import(CommonConfig.class)
@@ -79,7 +81,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
 
     @Bean(name = "bootGroup", destroyMethod = "close")
     public NioEventLoopGroup bootGroup() {
-        return new NioEventLoopGroup(1){
+        return new NioEventLoopGroup(1) {
             public void close() {
                 super.shutdownGracefully().awaitUninterruptibly();
             }
@@ -88,7 +90,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
 
     @Bean(name = "processGroup", destroyMethod = "close")
     public NioEventLoopGroup processGroup() {
-        return new NioEventLoopGroup(){
+        return new NioEventLoopGroup() {
             public void close() {
                 super.shutdownGracefully().awaitUninterruptibly();
             }
@@ -98,7 +100,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
     @Bean(name = "eventExecutorGroup", destroyMethod = "close")
     public EventExecutorGroup eventExecutorGroup() {
         final int countThreads = Runtime.getRuntime().availableProcessors() * 2;
-        return new DefaultEventExecutorGroup(countThreads){
+        return new DefaultEventExecutorGroup(countThreads) {
             public void close() {
                 super.shutdownGracefully().awaitUninterruptibly();
             }

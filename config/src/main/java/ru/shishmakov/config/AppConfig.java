@@ -1,6 +1,8 @@
 package ru.shishmakov.config;
 
-
+/**
+ * @author Dmitriy Shishmakov
+ */
 public interface AppConfig {
 
     String getProfileId();

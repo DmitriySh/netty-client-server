@@ -9,6 +9,9 @@ import ru.shishmakov.server.entity.Profile;
 
 import java.util.UUID;
 
+/**
+ * @author Dmitriy Shishmakov
+ */
 @Service("mongoService")
 public class MongoDbService implements DbService<Profile, UUID> {
 

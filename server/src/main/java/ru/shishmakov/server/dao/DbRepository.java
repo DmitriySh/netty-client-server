@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 /**
  * Captures the domain type to manage. Exists solely to provide a connection to the DB.
+ *
+ * @author Dmitriy Shishmakov
  */
 @NoRepositoryBean
 public interface DbRepository<T, ID extends Serializable> extends Repository<T, ID> {
