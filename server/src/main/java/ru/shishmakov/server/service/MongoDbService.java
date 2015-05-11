@@ -13,7 +13,7 @@ import java.util.UUID;
 public class MongoDbService implements DbService<Profile, UUID> {
 
     @Autowired
-    @Qualifier("mongoDao")
+    @Qualifier("mongoRepository")
     private DbRepository<Profile, UUID> repository;
 
     @Override
