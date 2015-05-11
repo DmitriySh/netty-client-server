@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * Simple singleton to convert {@link Binary}s to their {@link UUID} representation.
  */
-public enum BinaryConverterTo2UUID implements Converter<Binary, UUID> {
+public enum BinaryConverterToUuid implements Converter<Binary, UUID> {
     INSTANCE;
 
     @Override
