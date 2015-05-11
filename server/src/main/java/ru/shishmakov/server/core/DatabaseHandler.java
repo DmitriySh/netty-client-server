@@ -10,10 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.server.entity.Profile;
-import ru.shishmakov.server.entity.Protocol;
 import ru.shishmakov.server.helper.DatabaseWorker;
+import ru.shishmakov.server.helper.Protocol;
 import ru.shishmakov.server.helper.ResponseWorker;
 import ru.shishmakov.server.service.DbService;
 
@@ -42,9 +41,6 @@ public class DatabaseHandler extends HttpResponse {
     private static final String PONG = "pong";
 
     @Autowired
-    private AppConfig config;
-
-    @Autowired
     @Qualifier("mongoService")
     private DbService<Profile, UUID> service;
 
@@ -55,7 +51,7 @@ public class DatabaseHandler extends HttpResponse {
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) {
+    public void channelReadComplete(final ChannelHandlerContext ctx) {
         ctx.flush();
     }
 
@@ -72,15 +68,16 @@ public class DatabaseHandler extends HttpResponse {
             return;
         }
         final FullHttpRequest request = ((DatabaseWorker) msg).getWorker();
-        final Protocol protocol = buildFromJson(request);
+        final Protocol protocol = buildProtocol(request);
+        // illegal action command
         if (!PING.equalsIgnoreCase(protocol.getAction())) {
             final FullHttpResponse response = this.buildResponseHttp400("protocol");
             // pushed to the next channel
             ctx.fireChannelRead(new ResponseWorker(response));
             return;
         }
-
-        final Profile profile = findProfile(protocol);
+        // known action command
+        final Profile profile = findOrCreateProfile(protocol);
         final FullHttpResponse response = this.buildResponseHttp200(PONG, profile);
         // pushed to the next channel
         ctx.fireChannelRead(new ResponseWorker(response));
@@ -104,18 +101,18 @@ public class DatabaseHandler extends HttpResponse {
      * @param protocol instance of {@link Protocol}
      * @return quantity of requests from current client
      */
-    private Profile findProfile(final Protocol protocol) {
-        UUID profileId = protocol.getProfileId();
+    private Profile findOrCreateProfile(final Protocol protocol) {
+        final String profileId = protocol.getProfileId();
         if (profileId == null) {
-            profileId = UUID.randomUUID();
+            final UUID newProfileId = UUID.randomUUID();
+            return service.getById(newProfileId);
         }
-        return service.getById(profileId);
+        return service.getById(UUID.fromString(profileId));
     }
 
-    private Protocol buildFromJson(final FullHttpRequest request) {
+    private Protocol buildProtocol(final FullHttpRequest request) {
         try {
             final String data = request.content().toString(StandardCharsets.UTF_8);
-            // todo: should deserialize to UUID !!!
             final Protocol protocol = new Gson().fromJson(data, Protocol.class);
             return protocol == null ? new Protocol(null) : protocol;
         } catch (Exception e) {

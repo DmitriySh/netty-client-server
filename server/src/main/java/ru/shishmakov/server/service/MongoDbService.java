@@ -18,6 +18,6 @@ public class MongoDbService implements DbService<Profile, UUID> {
 
     @Override
     public Profile getById(final UUID uuid) {
-        return repository.find(uuid);
+        return repository.findOne(uuid);
     }
 }

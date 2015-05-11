@@ -1,8 +1,7 @@
-package ru.shishmakov.server.entity;
+package ru.shishmakov.server.helper;
 
 import com.google.gson.JsonObject;
-
-import java.util.UUID;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * The main protocol of transfer between client and server.
@@ -13,19 +12,20 @@ public class Protocol {
 
     private String action;
     private String content;
-    private UUID profileId;
+    @SerializedName("profileid")
+    private String profileId;
     private String status;
 
     public Protocol(String action) {
         this.action = action;
     }
 
-    public UUID getProfileId() {
+    public String getProfileId() {
         return profileId;
     }
 
-    public void setProfileId(UUID profileid) {
-        this.profileId = profileid;
+    public void setProfileId(String profileId) {
+        this.profileId = profileId;
     }
 
     public String getAction() {
@@ -62,7 +62,7 @@ public class Protocol {
             jsonObject.addProperty("content", content);
         }
         if (profileId != null) {
-            jsonObject.addProperty("profileid", profileId.toString());
+            jsonObject.addProperty("profileid", profileId);
         }
         if (status != null) {
             jsonObject.addProperty("status", status);

@@ -13,6 +13,9 @@ public interface DbRepository<T, ID extends Serializable> extends Repository<T, 
 
     /**
      * Retrieves an entity by its id.
+     *
+     * @param id must not be {@literal null}.
+     * @return the entity with the given {@literal id}.
      */
-    T find(final ID id);
+    T findOne(final ID id);
 }

@@ -25,7 +25,7 @@ public class MongoDbProfileRepository implements DbRepository<Profile, UUID> {
     private MongoOperations mongoOperations;
 
     @Override
-    public Profile find(final UUID uuid) {
+    public Profile findOne(final UUID uuid) {
         final Query findQuery = new Query(Criteria.where("profileid").is(uuid));
 
         final Update updateQuery = new Update();

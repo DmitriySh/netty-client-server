@@ -16,25 +16,19 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.*;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.config.CommonConfig;
 import ru.shishmakov.server.dao.PackageMarkerRepository;
 import ru.shishmakov.server.entity.Profile;
-import ru.shishmakov.server.helper.BinaryConverterToUuid;
-import ru.shishmakov.server.helper.UuidToBinaryConverter;
 import ru.shishmakov.server.service.PackageMarkerService;
 
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Extension of configuration for Server
@@ -150,18 +144,6 @@ public class ServerConfig extends AbstractMongoConfiguration {
     }
 
     /**
-     * Register custom {@link Converter} types in a {@link CustomConversions} object
-     */
-    @Bean
-    @Override
-    public CustomConversions customConversions() {
-        // todo: StringToDBObjectConverter ???
-        final List<?> converters = Arrays.asList(BinaryConverterToUuid.INSTANCE,
-                UuidToBinaryConverter.INSTANCE);
-        return new CustomConversions(converters);
-    }
-
-    /**
      * Return the name of the database to connect to.
      */
     @Override
@@ -195,6 +177,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
      */
     @Bean
     @Override
+    @SuppressWarnings("deprecation")
     public MongoDbFactory mongoDbFactory() throws Exception {
         final String user = config.getDatabaseUser();
         final String password = config.getDatabasePassword();

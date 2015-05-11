@@ -2,16 +2,18 @@ package ru.shishmakov.server.core;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import ru.shishmakov.server.entity.Profile;
-import ru.shishmakov.server.entity.Protocol;
+import ru.shishmakov.server.helper.Protocol;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
- * Utility class for preparing HTTP Response
+ * Abstract base class for {@link ChannelInboundHandler} implementations which provide utility methods
+ * for preparing HTTP Response.
  *
  * @author Dmitriy Shishmakov
  */
@@ -34,12 +36,13 @@ public abstract class HttpResponse extends ChannelInboundHandlerAdapter {
     }
 
     public FullHttpResponse buildResponseHttp200(final String pong, final Profile profile) {
+        final HttpResponseStatus status = HttpResponseStatus.OK;
         final UUID uuid = profile.getProfileId();
         final Protocol protocol = new Protocol(pong);
         protocol.setContent(pong + " " + profile.getQuantity());
-        protocol.setProfileId(uuid);
-        protocol.setStatus(HttpResponseStatus.OK.toString());
-        return buildHttpResponse(protocol.toString(), HttpResponseStatus.OK);
+        protocol.setProfileId(uuid.toString());
+        protocol.setStatus(String.valueOf(status));
+        return buildHttpResponse(protocol.toString(), status);
     }
 
     public FullHttpResponse buildResponseHttp405() {
