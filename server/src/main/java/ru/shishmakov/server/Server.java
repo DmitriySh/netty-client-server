@@ -58,6 +58,7 @@ public class Server {
     private static void checkDbConnection(final AbstractApplicationContext context) {
         logger.warn("Check connection to MongoDB ... ");
         final Mongo mongoClient = context.getBean(Mongo.class);
+        mongoClient.isLocked();
         final ServerAddress address = mongoClient.getAddress();
         logger.warn("Connected to MongoDB on {}:{}", address.getHost(), address.getPort());
     }

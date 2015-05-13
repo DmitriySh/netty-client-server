@@ -2,7 +2,8 @@ package ru.shishmakov.server.service;
 
 /**
  * Empty marker class.<br/>
- * It used to identify package for type-safe in Spring {@code @ComponentScan(basePackageClasses = )}.
+ * It used to identify package with classes of "Business Service Facade"
+ * for type-safe in Spring {@code @ComponentScan(basePackageClasses = )}.
  *
  * @author Dmitriy Shishmakov
  */

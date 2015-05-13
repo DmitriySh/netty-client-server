@@ -25,7 +25,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.config.CommonConfig;
 import ru.shishmakov.server.dao.PackageMarkerRepository;
-import ru.shishmakov.server.entity.Profile;
+import ru.shishmakov.server.entity.PackageMarkerDocument;
 import ru.shishmakov.server.service.PackageMarkerService;
 
 import java.net.UnknownHostException;
@@ -170,7 +170,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
      */
     @Override
     protected String getMappingBasePackage() {
-        final Package mappingPackage = Profile.class.getPackage();
+        final Package mappingPackage = PackageMarkerDocument.class.getPackage();
         return mappingPackage == null ? null : mappingPackage.getName();
     }
 

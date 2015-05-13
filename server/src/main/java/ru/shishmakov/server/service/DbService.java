@@ -4,6 +4,9 @@ package ru.shishmakov.server.service;
 import java.io.Serializable;
 
 /**
+ * Defines pattern "Business Service Facade" as an interface
+ * that hides the complexities of business components and their interactions.
+ *
  * @param <T>  type of entity
  * @param <ID> identifier of current entity
  * @author Dmitriy Shishmakov

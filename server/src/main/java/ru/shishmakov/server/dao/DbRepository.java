@@ -1,16 +1,17 @@
 package ru.shishmakov.server.dao;
 
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
 
 import java.io.Serializable;
 
 /**
- * Captures the domain type to manage. Exists solely to provide a connection to the DB.
+ * Defines pattern "Data Access Object" as a mechanism for encapsulating storage,
+ * retrieval, and search behavior which emulates a collection of objects.
  *
+ * @param <T>  type of entity
+ * @param <ID> identifier of current entity
  * @author Dmitriy Shishmakov
  */
-@NoRepositoryBean
 public interface DbRepository<T, ID extends Serializable> extends Repository<T, ID> {
 
     /**
