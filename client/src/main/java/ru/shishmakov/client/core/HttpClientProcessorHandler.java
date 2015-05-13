@@ -1,19 +1,25 @@
-package ru.shishmakov.client;
+package ru.shishmakov.client.core;
 
 
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpObject;
-import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Dmitriy Shishmakov
  */
+@Component
+@Qualifier("httpClientProcessorHandler")
+@Sharable
 public class HttpClientProcessorHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
@@ -26,12 +32,14 @@ public class HttpClientProcessorHandler extends SimpleChannelInboundHandler<Http
     }
 
     @Override
-    protected void channelRead0(final ChannelHandlerContext ctx, final HttpObject msg) throws Exception {
-        if (msg instanceof FullHttpResponse) {
-            final FullHttpResponse response = (FullHttpResponse) msg;
-            final String data = response.content().toString(CharsetUtil.UTF_8);
-            logger.info("Receive HTTP response: {} {}; content: {}", response.getProtocolVersion(),
-                    response.getStatus(), data);
+    protected void channelRead0(final ChannelHandlerContext ctx, final HttpObject msg)
+            throws Exception {
+        if (!(msg instanceof FullHttpResponse)) {
+            return;
         }
+        final FullHttpResponse response = (FullHttpResponse) msg;
+        final String data = response.content().toString(StandardCharsets.UTF_8);
+        logger.info("Receive HTTP response: {} {}; content: {}", response.getProtocolVersion(),
+                response.getStatus(), data);
     }
 }
