@@ -62,7 +62,6 @@ public class Game {
         logger.debug("Connected to MongoDB on {}:{}", address.getHost(), address.getPort());
     }
 
-    @PreDestroy
     public void stop() throws InterruptedException {
         logger.debug("Finalization server ...");
         serverChannel.close();

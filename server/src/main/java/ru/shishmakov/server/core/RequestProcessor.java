@@ -52,13 +52,13 @@ public class RequestProcessor extends HttpResponse {
             return;
         }
         final FullHttpRequest httpRequest = (FullHttpRequest) msg;
+        writeLogClientInfo(ctx, httpRequest);
         if (!HttpMethod.POST.equals((httpRequest).getMethod())) {
             final FullHttpResponse response = this.buildResponseHttp405();
             fireResponseChannel(ctx, response);
             return;
         }
 
-        writeLogClientInfo(ctx, httpRequest);
         switch (httpRequest.getUri()) {
             case HANDLER_URI: {
                 // pushed to the next channel

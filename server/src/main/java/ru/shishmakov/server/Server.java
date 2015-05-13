@@ -19,16 +19,21 @@ public class Server {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws InterruptedException {
+        Game game = null;
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
             context.register(ServerConfig.class);
             context.refresh();
             context.registerShutdownHook();
-            final Game game = context.getBean(Game.class);
+            game = context.getBean(Game.class);
             game.checkDbConnection();
             game.start();
         } catch (Exception e) {
             logger.error("The server failure: " + e.getMessage(), e);
+        }finally {
+            if(game != null){
+                game.stop();
+            }
         }
     }
 }
