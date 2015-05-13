@@ -7,10 +7,9 @@ This is a prototype game. Consist of two parts: client and server. `Client` perf
   
 ## Rules:  
 
-  * `Client` creates message with text `ping` and sends Http Request to server by POST method; example:`{ "action": "ping"}`.  
+  * `Client` creates messages with text `ping` and sends Http Request to server by POST method; example:`{ "action": "ping"}`.  
   * `Server` receives request and should creates Http Response to back client with message `pong N`; _N_ is a quantity of requests from current client; example: `{"action" : "pong", "content" : "pong 1", "profileid" : "8b939bb8-1faa-4d62-8b42-43d63774e1d0", "status" : "200 OK"}`.  
   * `Server` might have high load from huge number of clients.
-  * `Client` perform requests to server.
   * `profileid` is a main possibility for server to know all clients: new and old. The type of `profileid` is an [UUID](https://docs.oracle.com/javase/7/docs/api/java/util/UUID.html) receives from client or generates on server side and sent back to client.
 ```sh
 Server JSON document: 
@@ -228,10 +227,19 @@ netty-client-server/client/target>java -jar client-1.0-SNAPSHOT.jar
 13.05.15 09:18:09 DEBUG - ResponseSender       - Sent the data:{"action":"pong","content":"pong 10","profileid":"8b939bb8-1faa-4d62-8b42-43d63774e1d0","status":"200 OK"} (ResponseSender.java:46)  
 
 ```
-  
-  
----
 
+---  
+
+## Stop
+  * `Server` is terminated in response to a user interrupt, such as typing `^C` (Ctrl + C), or a system-wide event of shutdown.  
+```sh
+13.05.15 13:05:04 DEBUG - Game                 - Finalization server ... (Game.java:66)
+13.05.15 13:05:04 INFO  - Game                 - Shutdown the server: [id: 0x31c110b3, /127.0.0.1:88] (Game.java:68)
+```
+  * All resources will be closed correctly (thread pools, socket, connection to database)
+
+
+---  
 
 ## The end.
 
