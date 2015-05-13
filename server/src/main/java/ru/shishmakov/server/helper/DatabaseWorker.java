@@ -5,7 +5,7 @@ import ru.shishmakov.server.core.DatabaseHandler;
 import ru.shishmakov.server.core.ResponseSender;
 
 /**
- * Object that carries data between processes {@link ResponseSender} and {@link DatabaseHandler}.
+ * Object that carries data between processes {@link DatabaseHandler} and {@link ResponseSender}.
  *
  * @author Dmitriy Shishmakov
  */

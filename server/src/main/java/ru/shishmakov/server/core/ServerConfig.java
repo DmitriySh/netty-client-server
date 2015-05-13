@@ -37,7 +37,8 @@ import java.net.UnknownHostException;
  */
 @Configuration
 @Import(CommonConfig.class)
-@ComponentScan(basePackageClasses = {PackageMarkerService.class, PackageMarkerRepository.class})
+@ComponentScan(basePackageClasses =
+        {PackageMarkerService.class, PackageMarkerRepository.class, PackageMarkerCore.class})
 public class ServerConfig extends AbstractMongoConfiguration {
 
     @Autowired
@@ -177,7 +178,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
     /**
      * The MongoClient class is designed to be <u>thread-safe</u> and shared among threads.
      */
-    @Bean(destroyMethod = "close")
+    @Bean(name = "mongo", destroyMethod = "close")
     public MongoClient mongo() throws UnknownHostException {
         final String host = config.getDatabaseHost();
         final Integer port = config.getDatabasePort();
