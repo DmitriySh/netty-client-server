@@ -2,7 +2,7 @@ netty-client-server
 =======
 
 My pet project.  
-This is a prototype game. Consist of two parts: client and server. `Client` performs requests to server and receive response. `Server` listerns soket and waiting to recieve a request. Powered by: `Java SE`, `Spring Data`, `Netty Framework` over HTTP, `MongoDB` and `JSON` like a protocol for messages communication. Netty supports SEDA like highly customizable thread model: single thread, one or more thread pools and queue between them.
+This is a prototype game. Consist of two parts: client and server. `Client` performs requests to server and receive response. `Server` listerns soket and waiting to recieve a request. Powered by: `Java SE`, `Spring Data Framework`, `Netty Framework` over HTTP, `MongoDB` and `JSON` like a protocol for messages communication. Netty supports SEDA like highly customizable thread model: single thread, one or more thread pools and queue between them.
   
   
 ## Rules:  
