@@ -48,7 +48,7 @@ public class Game {
     }
 
     public void start() throws InterruptedException {
-        logger.warn("Initialise server ...");
+        logger.debug("Initialise server ...");
         serverChannel = server.bind(host, port).sync().channel();
         logger.info("Start the server: {}. Listen on: {}", this.getClass().getSimpleName(),
                 serverChannel.localAddress());
@@ -56,15 +56,15 @@ public class Game {
     }
 
     public void checkDbConnection() {
-        logger.warn("Check connection to MongoDB ... ");
+        logger.debug("Check connection to MongoDB ... ");
         mongo.isLocked();
         final ServerAddress address = mongo.getAddress();
-        logger.warn("Connected to MongoDB on {}:{}", address.getHost(), address.getPort());
+        logger.debug("Connected to MongoDB on {}:{}", address.getHost(), address.getPort());
     }
 
     @PreDestroy
     public void stop() throws InterruptedException {
-        logger.warn("Finalization server ...");
+        logger.debug("Finalization server ...");
         serverChannel.close();
         logger.info("Shutdown the server: {}", serverChannel);
     }

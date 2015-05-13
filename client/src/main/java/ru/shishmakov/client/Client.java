@@ -43,9 +43,9 @@ public class Client {
     }
 
     private void run() throws InterruptedException {
-        logger.warn("Initialise client ...");
+        logger.debug("Initialise client ...");
         final Channel clientChannel = client.connect(host, port).sync().channel();
-        logger.warn("Start the client: {}. Listen on local address: {}; remote address: {}",
+        logger.debug("Start the client: {}. Listen on local address: {}; remote address: {}",
                 this.getClass().getSimpleName(), clientChannel.localAddress(),
                 clientChannel.remoteAddress());
         final String json = buildJson();
@@ -54,7 +54,7 @@ public class Client {
         logger.info("Send HTTP request: {} {} {}; content: {}", request.getMethod(), request.getUri(),
                 request.getProtocolVersion(), json);
         clientChannel.closeFuture().sync();
-        logger.warn("Client to close the connection: {}", Client.class.getSimpleName());
+        logger.debug("Client to close the connection: {}", Client.class.getSimpleName());
     }
 
     private FullHttpRequest buildFullHttpRequest(final String json) {
