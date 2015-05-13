@@ -9,8 +9,8 @@ This is a prototype game. Consist of two parts: client and server. `Client` perf
 
   * `Client` creates message with text `ping` and sends Http Request to server by POST method; example:`{ "action": "ping"}`.  
   * `Server` receives request and should creates Http Response to back client with message `pong N`; _N_ is a quantity of requests from current client; example: `{"action" : "pong", "content" : "pong 1", "profileid" : "8b939bb8-1faa-4d62-8b42-43d63774e1d0", "status" : "200 OK"}`.  
-  * `Server` : might have high load from huge number of clients.  
-  * `Client`: perform requests to server.
+  * `Server` might have high load from huge number of clients.
+  * `Client` perform requests to server.
   * `profileid` is a main possibility for server to know all clients: new and old. The type of `profileid` is an UUID receives from client or generates on server side and sent back to client.
 ```sh
 Server JSON document: 
@@ -47,7 +47,7 @@ Example of FindAndModify query:
 ##### MongoDB configuration
 
   * Configuration File  
-    * MongoDB need a folders (data and log directory) to store its data. By default, it will store in `/data/db/` and `/data/log/`, you should create those folders manually. MongoDB won't create it for you.
+    * MongoDB needs a folders (data and log directory) to store its data. By default, it will store in `/data/db/` and `/data/log/`, you should create those folders manually. MongoDB won't create it for you.
     * Create 2 new directories `/data/`, `/log/` near with `/bin/`.
     * Create a file `mongo.config` into `/bin/` directory, it’s just a YAML file:  
 ```yaml 
