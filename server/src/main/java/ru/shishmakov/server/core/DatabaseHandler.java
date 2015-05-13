@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import org.bson.types.ObjectId;
+import org.bson.types.Binary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,18 +85,44 @@ public class DatabaseHandler extends HttpResponse {
 
     /**
      * The main method of the server <i>"Ping Pong"</i>.
-     * Client ID is a main opportunity for server to know all clients: new and old.
-     * The type is an {@link ObjectId} defines unique of document into Mongo DB.
+     * Profile ID is a main possibility for server to know all clients: new and old.
+     * The type is an {@link UUID} receives from client or generates on server side and sent back to client.
+     * Java type {@link UUID} is a {@link Binary} type of BSON into Mongo DB.
      * <p>
-     * <b>Example of JSON document: </b><br/>
-     * {@code {"_id" : ObjectId("552fcaadcebf0f9b1ae94ca4") , "quantity" : 2}}
+     * <b>Server JSON document: </b>
+     * <pre>
+     * {
+     *    "_id" : ObjectId("55510463b33e15e132620f4a"),
+     *    "profileid" : BinData(3,"Yk2qH7ibk4vQ4XQ31kNCiw=="),
+     *    "quantity" : 7
+     * }
+     * </pre>
      * <p>
-     * <b>Example of FindAndModify query: </b> <br/>
-     * {@code
-     * {query: {"_id" : ObjectId("552fcaadcebf0f9b1ae94ca4")} ,
-     * sort: {"_id" : 1},
-     * update: {$inc: {"quantity" : 1}},
-     * new: true, upset: true}}
+     * <b>Example of FindAndModify query: </b>
+     * <pre>
+     * {
+     *    query: {"profileid" : BinData(3,"Yk2qH7ibk4vQ4XQ31kNCiw==")} ,
+     *    update: {$inc: {"quantity" : 1}},
+     *    new: true, upset: true}}
+     * </pre>
+     * <p>
+     * <b>Client request document:</b>
+     * <pre>
+     * {
+     *    "action" : "ping",
+     *    "profileid" : "8b939bb8-1faa-4d62-8b42-43d63774e1d0"
+     * }
+     * </pre>
+     * <p>
+     * <b>Server response document:</b>
+     * <pre>
+     * {
+     *    "action" : "pong",
+     *    "content" : "pong 7",
+     *    "profileid" : "8b939bb8-1faa-4d62-8b42-43d63774e1d0",
+     *    "status" : "200 OK"
+     * }
+     * </pre>
      *
      * @param protocol instance of {@link Protocol}
      * @return quantity of requests from current client
