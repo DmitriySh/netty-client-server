@@ -10,10 +10,12 @@ import ru.shishmakov.server.entity.Profile;
 import java.util.UUID;
 
 /**
+ * Access to domain type {@link Profile} by instance of DAO object.
+ *
  * @author Dmitriy Shishmakov
  */
 @Service("mongoService")
-public class MongoDbService implements DbService<Profile, UUID> {
+public class MongoDbProfileService implements DbService<Profile, UUID> {
 
     @Autowired
     @Qualifier("mongoRepository")
