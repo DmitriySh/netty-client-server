@@ -103,7 +103,9 @@ public class DatabaseHandler extends HttpResponse {
      * {
      *    query: {"profileid" : BinData(3,"Yk2qH7ibk4vQ4XQ31kNCiw==")} ,
      *    update: {$inc: {"quantity" : 1}},
-     *    new: true, upset: true}}
+     *    new: true,
+     *    upset: true
+     * }
      * </pre>
      * <p>
      * <b>Client request document:</b>

@@ -1,4 +1,4 @@
-package ru.shishmakov.client.config;
+package ru.shishmakov.client.core;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

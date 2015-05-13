@@ -1,4 +1,4 @@
-package ru.shishmakov.client.config;
+package ru.shishmakov.client.core;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.nio.NioEventLoopGroup;

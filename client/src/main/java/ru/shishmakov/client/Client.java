@@ -10,7 +10,7 @@ import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ru.shishmakov.client.config.ClientConfig;
+import ru.shishmakov.client.core.ClientConfig;
 import ru.shishmakov.config.AppConfig;
 
 import java.lang.invoke.MethodHandles;

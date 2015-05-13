@@ -1,4 +1,4 @@
-package ru.shishmakov.client.config;
+package ru.shishmakov.client.core;
 
 /**
  * Empty marker class.<br/>
