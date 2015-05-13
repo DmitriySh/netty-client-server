@@ -46,8 +46,8 @@ public class Client {
         logger.debug("Initialise client ...");
         final Channel clientChannel = client.connect(host, port).sync().channel();
         logger.debug("Start the client: {}. Listen on local address: {}; remote address: {}",
-                this.getClass().getSimpleName(), clientChannel.localAddress(),
-                clientChannel.remoteAddress());
+            this.getClass().getSimpleName(), clientChannel.localAddress(),
+            clientChannel.remoteAddress());
         final String json = buildJson();
         final FullHttpRequest request = buildFullHttpRequest(json);
         clientChannel.writeAndFlush(request);
@@ -78,8 +78,9 @@ public class Client {
     }
 
     public static void main(final String[] args) throws Exception {
-        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
-                ClientConfig.class)) {
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
+            context.register(ClientConfig.class);
+            context.refresh();
             context.registerShutdownHook();
             new Client(context).run();
         } catch (Exception e) {
