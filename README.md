@@ -104,9 +104,9 @@ pingpong  (empty)
   *  Go to the `Config` configuration file [`app.properties`](https://github.com/DmitriySh/netty-client-server/blob/develop/config/src/main/resources/app.properties) to make some changes if you need it:
 ```properties  
 
-###################################
-# Configuration MongoDB
-###################################
+###################################  
+# Configuration MongoDB  
+###################################  
 database.host=127.0.0.1
 database.port=27017
 database.user=pingponguser
@@ -114,15 +114,15 @@ database.password=pingponguser
 database.name=pingpong
 collection.name=profile
 
-###################################
-# Configuration Ping Pong Server
-###################################
+###################################  
+# Configuration Ping Pong Server  
+###################################  
 bind.host=127.0.0.1
 bind.port=80
 
-###################################
-# Configuration Client
-###################################
+###################################  
+# Configuration Client  
+###################################  
 connect.host=127.0.0.1
 connect.port=80
 connect.uri=/handler
@@ -141,20 +141,20 @@ netty-client-server>mvn clean package
 
 ...<cut>...
 
-[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------  
 [INFO] Reactor Summary:
 [INFO]
-[INFO] client-server ...................................... SUCCESS [  8.257 s]
-[INFO] config ............................................. SUCCESS [ 11.099 s]
-[INFO] client ............................................. SUCCESS [  8.244 s]
-[INFO] server ............................................. SUCCESS [  3.089 s]
-[INFO] ------------------------------------------------------------------------
+[INFO] client-server ...................................... SUCCESS [  8.257 s]  
+[INFO] config ............................................. SUCCESS [ 11.099 s]  
+[INFO] client ............................................. SUCCESS [  8.244 s]  
+[INFO] server ............................................. SUCCESS [  3.089 s]  
+[INFO] ------------------------------------------------------------------------  
 [INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------  
 [INFO] Total time: 31.024 s
 [INFO] Finished at: 2015-05-13T09:04:35+03:00
 [INFO] Final Memory: 20M/54M
-[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------  
 
 ```  
    
@@ -165,27 +165,27 @@ netty-client-server>mvn clean package -P test-server
 ... <cut> ...
 
 
--------------------------------------------------------
+-------------------------------------------------------  
  T E S T S
--------------------------------------------------------
-Running ru.shishmakov.server.test.TestHttpRequest
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Running test "testHttp200AuthorRequest" (TestBase.java:33)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Expected result: {"action":"author","content":"Dmitriy Shishmakov, https://github.com/DmitriySh","status":"200 OK"} (TestHttpRequest.java:160)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Actual result: {"action":"author","content":"Dmitriy Shishmakov, https://github.com/DmitriySh","status":"200 OK"} (TestHttpRequest.java:161)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Running test "testHttp400BadProtocolBody" (TestBase.java:33)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Expected result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:136)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Actual result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:137)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Running test "testHttp400EmptyProtocolBody" (TestBase.java:33)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Expected result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:112)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Actual result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:113)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Running test "testHttp405NotAllowedMethod" (TestBase.java:33)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Expected result: {"action":"error","content":"Ping Pong server failure","status":"405 Method Not Allowed"} (TestHttpRequest.java:89)
-13.05.15 09:07:48 INFO  - TestHttpRequest      - Actual result: {"action":"error","content":"Ping Pong server failure","status":"405 Method Not Allowed"} (TestHttpRequest.java:90)
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.012 sec - in ru.shishmakov.server.test.TestHttpRequest
+-------------------------------------------------------  
+Running ru.shishmakov.server.test.TestHttpRequest   
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Running test "testHttp200AuthorRequest" (TestBase.java:33)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Expected result: {"action":"author","content":"Dmitriy Shishmakov, https://github.com/DmitriySh","status":"200 OK"} (TestHttpRequest.java:160)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Actual result: {"action":"author","content":"Dmitriy Shishmakov, https://github.com/DmitriySh","status":"200 OK"} (TestHttpRequest.java:161)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Running test "testHttp400BadProtocolBody" (TestBase.java:33)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Expected result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:136)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Actual result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:137)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Running test "testHttp400EmptyProtocolBody" (TestBase.java:33)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Expected result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:112)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Actual result: {"action":"error","content":"Ping Pong server can not parse protocol of the request","status":"400 Bad Request"} (TestHttpRequest.java:113)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Running test "testHttp405NotAllowedMethod" (TestBase.java:33)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Expected result: {"action":"error","content":"Ping Pong server failure","status":"405 Method Not Allowed"} (TestHttpRequest.java:89)  
+13.05.15 09:07:48 INFO  - TestHttpRequest      - Actual result: {"action":"error","content":"Ping Pong server failure","status":"405 Method Not Allowed"} (TestHttpRequest.java:90)  
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.012 sec - in ru.shishmakov.server.test.TestHttpRequest  
 
-Results :
+Results :  
 
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0  
 
 
 ... <cut> ...
@@ -198,34 +198,34 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
 ## Run
   *  Go to the `Server` submodule path `/netty-client-server/server/target/` and run:
 ```sh
-netty-client-server/server/target>java -jar server-1.0-SNAPSHOT.jar
+netty-client-server/server/target>java -jar server-1.0-SNAPSHOT.jar  
 
-13.05.15 09:13:43 WARN  - Game                 - Check connection to MongoDB ...  (Game.java:59)
-13.05.15 09:13:43 WARN  - Game                 - Connected to MongoDB on 127.0.0.1:27017 (Game.java:62)
-13.05.15 09:13:43 WARN  - Game                 - Initialise server ... (Game.java:51)
-13.05.15 09:13:43 INFO  - Game                 - Start the server: Game. Listen on: /127.0.0.1:80 (Game.java:53)
+13.05.15 09:13:43 WARN  - Game                 - Check connection to MongoDB ...  (Game.java:59)  
+13.05.15 09:13:43 WARN  - Game                 - Connected to MongoDB on 127.0.0.1:27017 (Game.java:62)  
+13.05.15 09:13:43 WARN  - Game                 - Initialise server ... (Game.java:51)  
+13.05.15 09:13:43 INFO  - Game                 - Start the server: Game. Listen on: /127.0.0.1:80 (Game.java:53)  
 
 
 ```
   *  Go to the `Client` submodule path `/netty-client-server/client/target/` and run:  
 ```sh
-netty-client-server/client/target>java -jar client-1.0-SNAPSHOT.jar
+netty-client-server/client/target>java -jar client-1.0-SNAPSHOT.jar  
 
-13.05.15 09:18:08 WARN  - Client               - Initialise client ... (Client.java:46)
-13.05.15 09:18:09 WARN  - Client               - Start the client: Client. Listen on local address: /127.0.0.1:63736; remote address: /127.0.0.1:80 (Client.java:48)
-13.05.15 09:18:09 INFO  - Client               - Send HTTP request: POST /handler HTTP/1.1; content: {"action":"ping","profileid":"8b939bb8-1faa-4d62-8b42-43d63774e1d0"} (Client.java:54)
-13.05.15 09:18:09 INFO  - HttpClientProcessorHandler - Receive HTTP response:HTTP/1.1 200 OK; content: {"action":"pong","content":"pong 10","profileid":"8b939bb8-1faa-4d62-8b42-43d63774e1d0","status":"200 OK"} (HttpClientProcessorHandler.java:42)
-13.05.15 09:18:09 WARN  - Client               - Client to close the connection: Client (Client.java:57)
+13.05.15 09:18:08 WARN  - Client               - Initialise client ... (Client.java:46)  
+13.05.15 09:18:09 WARN  - Client               - Start the client: Client. Listen on local address: /127.0.0.1:63736; remote address: /127.0.0.1:80 (Client.java:48)  
+13.05.15 09:18:09 INFO  - Client               - Send HTTP request: POST /handler HTTP/1.1; content: {"action":"ping","profileid":"8b939bb8-1faa-4d62-8b42-43d63774e1d0"} (Client.java:54)  
+13.05.15 09:18:09 INFO  - HttpClientProcessorHandler - Receive HTTP response:HTTP/1.1 200 OK; content: {"action":"pong","content":"pong 10","profileid":"8b939bb8-1faa-4d62-8b42-43d63774e1d0","status":"200 OK"} (HttpClientProcessorHandler.java:42)  
+13.05.15 09:18:09 WARN  - Client               - Client to close the connection: Client (Client.java:57)  
 
 ```  
   
   * `Server` log:
 ```sh
-13.05.15 09:18:09 INFO  - RequestProcessor     - // ---------------- start client  (RequestProcessor.java:95)
-13.05.15 09:18:09 DEBUG - RequestProcessor     - Client localAddress: /127.0.0.1:80 (RequestProcessor.java:96)
-13.05.15 09:18:09 DEBUG - RequestProcessor     - Client remoteAddress: /127.0.0.1:63736 (RequestProcessor.java:97)
-13.05.15 09:18:09 INFO  - RequestProcessor     - Client uri: /handler data: {"action":"ping","profileid":"8b939bb8-1faa-4d62-8b42-43d63774e1d0"} (RequestProcessor.java:102)
-13.05.15 09:18:09 DEBUG - ResponseSender       - Sent the data:{"action":"pong","content":"pong 10","profileid":"8b939bb8-1faa-4d62-8b42-43d63774e1d0","status":"200 OK"} (ResponseSender.java:46)
+13.05.15 09:18:09 INFO  - RequestProcessor     - // ---------------- start client  (RequestProcessor.java:95)  
+13.05.15 09:18:09 DEBUG - RequestProcessor     - Client localAddress: /127.0.0.1:80 (RequestProcessor.java:96)  
+13.05.15 09:18:09 DEBUG - RequestProcessor     - Client remoteAddress: /127.0.0.1:63736 (RequestProcessor.java:97)  
+13.05.15 09:18:09 INFO  - RequestProcessor     - Client uri: /handler data: {"action":"ping","profileid":"8b939bb8-1faa-4d62-8b42-43d63774e1d0"} (RequestProcessor.java:102)  
+13.05.15 09:18:09 DEBUG - ResponseSender       - Sent the data:{"action":"pong","content":"pong 10","profileid":"8b939bb8-1faa-4d62-8b42-43d63774e1d0","status":"200 OK"} (ResponseSender.java:46)  
 
 ```
   
