@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 
 /**
@@ -12,7 +13,8 @@ import org.springframework.core.env.Environment;
  * @author Dmitriy Shishmakov
  */
 @Configuration
-@PropertySource("classpath:app.properties")
+@PropertySources({@PropertySource("classpath:app.properties"),
+        @PropertySource(value = "classpath:app.local.properties", ignoreResourceNotFound = true)})
 public class CommonConfig {
 
     @Autowired
