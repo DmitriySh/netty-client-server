@@ -100,7 +100,7 @@ pingpong  (empty)
   
 ##### Server and Client configuration  
   
-  *  Go to the `Config` configuration file [`app.properties`](https://github.com/DmitriySh/netty-client-server/blob/develop/config/src/main/resources/app.properties) to make some changes if you need it:
+  *  There are two configuration files: [`app.properties`](https://github.com/DmitriySh/netty-client-server/blob/develop/config/src/main/resources/app.properties) and [`app.local.properties`](https://github.com/DmitriySh/netty-client-server/blob/develop/config/src/main/resources/app.local.properties). Use  [`app.local.properties`](https://github.com/DmitriySh/netty-client-server/blob/develop/config/src/main/resources/app.local.properties) file to make some changes if you need it:
 ```properties  
 
 ###################################  
