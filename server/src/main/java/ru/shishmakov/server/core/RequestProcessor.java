@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  * @author Dmitriy Shishmakov
  * @see ServerChannelPipelineInitializer
  */
-public class RequestProcessor extends HttpResponse {
+public class RequestProcessor extends ChannelRead<FullHttpRequest> {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
@@ -42,16 +42,12 @@ public class RequestProcessor extends HttpResponse {
      * Handle the HttpRequest from client.
      * Push the request to the next channel or might to build a new HttpResponse and send to client.
      *
-     * @param ctx instance to interact with {@link ChannelPipeline} and other handlers
-     * @param msg the message to handle
+     * @param ctx         instance to interact with {@link ChannelPipeline} and other handlers
+     * @param httpRequest the message to handle
      * @throws Exception is thrown if an error occurred
      */
     @Override
-    public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-        if (!(msg instanceof FullHttpRequest)) {
-            return;
-        }
-        final FullHttpRequest httpRequest = (FullHttpRequest) msg;
+    public void decode(final ChannelHandlerContext ctx, final FullHttpRequest httpRequest) throws Exception {
         writeLogClientInfo(ctx, httpRequest);
         if (!HttpMethod.POST.equals((httpRequest).getMethod())) {
             final FullHttpResponse response = this.buildResponseHttp405();

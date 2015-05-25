@@ -27,7 +27,7 @@ import java.util.UUID;
  * @author Dmitriy Shishmakov
  * @see ServerChannelPipelineInitializer
  */
-public class DatabaseHandler extends HttpResponse {
+public class DatabaseHandler extends ChannelRead<DatabaseWorker> {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
@@ -58,16 +58,13 @@ public class DatabaseHandler extends HttpResponse {
     /**
      * Method to processes a {@code "ping"} message. Part of pipeline works with database.
      *
-     * @param ctx instance to interact with {@link ChannelPipeline} and other handlers
-     * @param msg the message to handle
+     * @param ctx    instance to interact with {@link ChannelPipeline} and other handlers
+     * @param worker the message to handle
      * @throws Exception is thrown if an error occurred
      */
     @Override
-    public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-        if (!(msg instanceof DatabaseWorker)) {
-            return;
-        }
-        final FullHttpRequest request = ((DatabaseWorker) msg).getWorker();
+    public void decode(final ChannelHandlerContext ctx, final DatabaseWorker worker) throws Exception {
+        final FullHttpRequest request = worker.getWorker();
         final Protocol protocol = buildProtocol(request);
         // illegal action command
         if (!PING.equalsIgnoreCase(protocol.getAction())) {

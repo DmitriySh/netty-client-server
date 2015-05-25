@@ -1,5 +1,6 @@
 package ru.shishmakov.server.core;
 
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -15,6 +16,7 @@ import ru.shishmakov.server.Server;
  * @author Dmitriy Shishmakov
  * @see Server
  */
+@Sharable
 public abstract class ServerChannelPipelineInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override

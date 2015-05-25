@@ -2,8 +2,10 @@ package ru.shishmakov.server.core;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.http.*;
 import ru.shishmakov.server.entity.Profile;
 import ru.shishmakov.server.helper.Protocol;
@@ -12,12 +14,27 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
- * Abstract base class for {@link ChannelInboundHandler} implementations which provide utility methods
+ * Abstract base class for {@link ChannelInboundHandler} implementations which provide additional methods
  * for preparing HTTP Response.
  *
  * @author Dmitriy Shishmakov
  */
-public abstract class HttpResponse extends ChannelInboundHandlerAdapter {
+public abstract class ChannelRead<T> extends ChannelInboundHandlerAdapter {
+
+    @Override
+    public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
+        try {
+            @SuppressWarnings("unchecked")
+            final T cast = (T) msg;
+            decode(ctx, cast);
+        } catch (DecoderException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new DecoderException(e);
+        }
+    }
+
+    protected abstract void decode(final ChannelHandlerContext ctx, final T msg) throws Exception;
 
     public FullHttpResponse buildResponseHttp400(final String content) {
         final HttpResponseStatus status = HttpResponseStatus.BAD_REQUEST;

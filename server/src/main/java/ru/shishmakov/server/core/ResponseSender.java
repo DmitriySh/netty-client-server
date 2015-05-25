@@ -3,7 +3,6 @@ package ru.shishmakov.server.core;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpResponse;
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ import java.nio.charset.StandardCharsets;
  * @author Dmitriy Shishmakov
  * @see ServerChannelPipelineInitializer
  */
-public class ResponseSender extends ChannelInboundHandlerAdapter {
+public class ResponseSender extends ChannelRead<ResponseWorker> {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
@@ -36,12 +35,15 @@ public class ResponseSender extends ChannelInboundHandlerAdapter {
         ctx.flush();
     }
 
+    /**
+     * Write the total HttpResponse from previous InboundHandlers to OutboundHandlers.
+     *
+     * @param ctx    instance to interact with {@link ChannelPipeline} and other handlers
+     * @param worker the message to handle
+     * @throws Exception is thrown if an error occurred
+     */
     @Override
-    public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-        if (!(msg instanceof ResponseWorker)) {
-            return;
-        }
-        final ResponseWorker worker = (ResponseWorker) msg;
+    public void decode(final ChannelHandlerContext ctx, final ResponseWorker worker) throws Exception {
         final FullHttpResponse response = worker.getWorker();
         logger.debug("Sent the data:{}", response.content().toString(StandardCharsets.UTF_8));
         ctx.write(response);
