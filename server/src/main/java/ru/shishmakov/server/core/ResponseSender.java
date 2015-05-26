@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
  * The last inbound channel of {@link ChannelPipeline}.
  *
  * @author Dmitriy Shishmakov
- * @see ServerChannelPipelineInitializer
+ * @see HttpPipeline
  */
 public class ResponseSender extends ChannelRead<ResponseWorker> {
 

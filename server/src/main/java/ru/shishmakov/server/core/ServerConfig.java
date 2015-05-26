@@ -4,6 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -80,6 +81,22 @@ public class ServerConfig extends AbstractMongoConfiguration {
         return new HttpResponseEncoder();
     }
 
+    @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public ProtocolSwitchHandler protocolSwitchHandler(){
+        return new ProtocolSwitchHandler() {
+            @Override
+            protected void enableProtocolBufferPipeline(final ChannelHandlerContext ctx) {
+
+            }
+
+            @Override
+            public void enableHttpPipeline(final ChannelHandlerContext ctx) {
+                enableHttpPipeline(ctx);
+            }
+        };
+    }
+
     @Bean(name = "bootGroup", destroyMethod = "close")
     public NioEventLoopGroup bootGroup() {
         return new NioEventLoopGroup(1) {
@@ -109,8 +126,19 @@ public class ServerConfig extends AbstractMongoConfiguration {
     }
 
     @Bean(name = "serverChannelPipelineInitializer")
-    public ServerChannelPipelineInitializer channelPipelineInitializer() {
+    public ServerChannelPipelineInitializer channelPipelineInitializer(){
         return new ServerChannelPipelineInitializer() {
+            @Override
+            protected ProtocolSwitchHandler getPipelineSwitcher() {
+                ProtocolSwitchHandler handler = protocolSwitchHandler();
+                return handler.enableHttpPipeline();
+            }
+        };
+    }
+
+    @Bean
+    public HttpPipeline enableHttpPipeline() {
+        return new HttpPipeline() {
             @Override
             public HttpRequestDecoder getHttpRequestDecoder() {
                 return httpRequestDecoder();
