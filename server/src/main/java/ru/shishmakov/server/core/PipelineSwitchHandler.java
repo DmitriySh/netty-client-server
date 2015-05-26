@@ -10,7 +10,7 @@ import ru.shishmakov.server.helper.ProtocolType;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
-public abstract class ProtocolSwitchHandler extends ByteToMessageDecoder {
+public abstract class PipelineSwitchHandler extends ByteToMessageDecoder {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles
             .lookup().lookupClass());
@@ -21,7 +21,6 @@ public abstract class ProtocolSwitchHandler extends ByteToMessageDecoder {
         if (message.readableBytes() < 4) {
             return;
         }
-
         switch (getProtocolType(message)) {
             case HTTP:
                 logger.debug("HTTP protocol pipeline is enabled");

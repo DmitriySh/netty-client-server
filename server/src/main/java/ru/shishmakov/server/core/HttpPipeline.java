@@ -1,10 +1,7 @@
 package ru.shishmakov.server.core;
 
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
@@ -19,8 +16,9 @@ import ru.shishmakov.server.Server;
  */
 public abstract class HttpPipeline {
 
-    protected void fillPipeline(final ChannelHandlerContext ctx) throws Exception {
+    protected void fillPipeline(final ChannelHandlerContext ctx) {
         final ChannelPipeline pipeline = ctx.pipeline();
+        pipeline.remove(PipelineSwitchHandler.class);
         pipeline
                 .addLast("decoder", getHttpRequestDecoder())
                 .addLast("aggregator", getHttpObjectAggregator())

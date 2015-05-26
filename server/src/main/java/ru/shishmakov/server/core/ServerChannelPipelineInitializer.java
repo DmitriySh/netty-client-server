@@ -12,9 +12,9 @@ public abstract class ServerChannelPipelineInitializer extends ChannelInitialize
     @Override
     protected void initChannel(final SocketChannel ch) throws Exception {
         final ChannelPipeline pipeline = ch.pipeline();
-        pipeline.addLast("switcher", getPipelineSwitcher());
+        pipeline.addLast("switcher", getPipelineSwitchHandler());
     }
 
-    protected abstract ProtocolSwitchHandler getPipelineSwitcher();
+    protected abstract PipelineSwitchHandler getPipelineSwitchHandler();
 
 }

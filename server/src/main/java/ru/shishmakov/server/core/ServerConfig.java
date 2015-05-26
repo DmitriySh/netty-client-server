@@ -83,8 +83,8 @@ public class ServerConfig extends AbstractMongoConfiguration {
 
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public ProtocolSwitchHandler protocolSwitchHandler(){
-        return new ProtocolSwitchHandler() {
+    public PipelineSwitchHandler pipelineSwitchHandler(){
+        return new PipelineSwitchHandler() {
             @Override
             protected void enableProtocolBufferPipeline(final ChannelHandlerContext ctx) {
 
@@ -92,7 +92,8 @@ public class ServerConfig extends AbstractMongoConfiguration {
 
             @Override
             public void enableHttpPipeline(final ChannelHandlerContext ctx) {
-                enableHttpPipeline(ctx);
+                final HttpPipeline httpPipeline = httpPipeline();
+                httpPipeline.fillPipeline(ctx);
             }
         };
     }
@@ -129,15 +130,14 @@ public class ServerConfig extends AbstractMongoConfiguration {
     public ServerChannelPipelineInitializer channelPipelineInitializer(){
         return new ServerChannelPipelineInitializer() {
             @Override
-            protected ProtocolSwitchHandler getPipelineSwitcher() {
-                ProtocolSwitchHandler handler = protocolSwitchHandler();
-                return handler.enableHttpPipeline();
+            protected PipelineSwitchHandler getPipelineSwitchHandler() {
+                return pipelineSwitchHandler();
             }
         };
     }
 
     @Bean
-    public HttpPipeline enableHttpPipeline() {
+    public HttpPipeline httpPipeline() {
         return new HttpPipeline() {
             @Override
             public HttpRequestDecoder getHttpRequestDecoder() {
