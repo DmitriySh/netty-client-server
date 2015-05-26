@@ -87,7 +87,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
         return new PipelineSwitchHandler() {
             @Override
             protected void enableProtocolBufferPipeline(final ChannelHandlerContext ctx) {
-
+                // todo: should be done
             }
 
             @Override
@@ -137,6 +137,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
     }
 
     @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public HttpPipeline httpPipeline() {
         return new HttpPipeline() {
             @Override
