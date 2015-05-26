@@ -85,16 +85,40 @@ public class ServerConfig extends AbstractMongoConfiguration {
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public PipelineSwitchHandler pipelineSwitchHandler(){
         return new PipelineSwitchHandler() {
+
             @Override
-            protected void enableProtocolBufferPipeline(final ChannelHandlerContext ctx) {
-                // todo: should be done
-                System.out.println("!!! Not yet ready !!!");
+            public HttpRequestDecoder getHttpRequestDecoder() {
+                return httpRequestDecoder();
             }
 
             @Override
-            public void enableHttpPipeline(final ChannelHandlerContext ctx) {
-                final HttpPipeline httpPipeline = httpPipeline();
-                httpPipeline.fillPipeline(ctx);
+            public HttpObjectAggregator getHttpObjectAggregator() {
+                return httpObjectAggregator();
+            }
+
+            @Override
+            public HttpResponseEncoder getHttpResponseEncoder() {
+                return httpResponseEncoder();
+            }
+
+            @Override
+            public EventExecutorGroup getEventExecutorGroup() {
+                return eventExecutorGroup();
+            }
+
+            @Override
+            public RequestProcessor getRequestProcessor() {
+                return requestProcessor();
+            }
+
+            @Override
+            public DatabaseHandler getDatabaseHandler() {
+                return databaseHandler();
+            }
+
+            @Override
+            public ResponseSender getResponseSender() {
+                return responseSender();
             }
         };
     }
@@ -137,47 +161,6 @@ public class ServerConfig extends AbstractMongoConfiguration {
             @Override
             protected PipelineSwitchHandler getPipelineSwitchHandler() {
                 return pipelineSwitchHandler();
-            }
-        };
-    }
-
-    @Bean
-    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public HttpPipeline httpPipeline() {
-        return new HttpPipeline() {
-            @Override
-            public HttpRequestDecoder getHttpRequestDecoder() {
-                return httpRequestDecoder();
-            }
-
-            @Override
-            public HttpObjectAggregator getHttpObjectAggregator() {
-                return httpObjectAggregator();
-            }
-
-            @Override
-            public HttpResponseEncoder getHttpResponseEncoder() {
-                return httpResponseEncoder();
-            }
-
-            @Override
-            public EventExecutorGroup getEventExecutorGroup() {
-                return eventExecutorGroup();
-            }
-
-            @Override
-            public RequestProcessor getRequestProcessor() {
-                return requestProcessor();
-            }
-
-            @Override
-            public DatabaseHandler getDatabaseHandler() {
-                return databaseHandler();
-            }
-
-            @Override
-            public ResponseSender getResponseSender() {
-                return responseSender();
             }
         };
     }

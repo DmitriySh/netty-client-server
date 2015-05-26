@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
  * Class parses the HTTP Request which was sent to the server.
  *
  * @author Dmitriy Shishmakov
- * @see HttpPipeline
+ * @see PipelineSwitchHandler
  */
 public class RequestProcessor extends ChannelRead<FullHttpRequest> {
 

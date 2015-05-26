@@ -25,7 +25,7 @@ import java.util.UUID;
  * It is seeking the number of received messages in database. Protocol  "ping".
  *
  * @author Dmitriy Shishmakov
- * @see HttpPipeline
+ * @see PipelineSwitchHandler
  */
 public class DatabaseHandler extends ChannelRead<DatabaseWorker> {
 
