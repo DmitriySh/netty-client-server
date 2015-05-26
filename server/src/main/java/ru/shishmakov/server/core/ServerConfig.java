@@ -88,6 +88,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
             @Override
             protected void enableProtocolBufferPipeline(final ChannelHandlerContext ctx) {
                 // todo: should be done
+                System.out.println("!!! Not yet ready !!!");
             }
 
             @Override
@@ -99,6 +100,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
     }
 
     @Bean(name = "bootGroup", destroyMethod = "close")
+    @Scope(BeanDefinition.SCOPE_SINGLETON)
     public NioEventLoopGroup bootGroup() {
         return new NioEventLoopGroup(1) {
             public void close() {
@@ -108,6 +110,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
     }
 
     @Bean(name = "processGroup", destroyMethod = "close")
+    @Scope(BeanDefinition.SCOPE_SINGLETON)
     public NioEventLoopGroup processGroup() {
         return new NioEventLoopGroup() {
             public void close() {
@@ -117,6 +120,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
     }
 
     @Bean(name = "eventExecutorGroup", destroyMethod = "close")
+    @Scope(BeanDefinition.SCOPE_SINGLETON)
     public EventExecutorGroup eventExecutorGroup() {
         final int countThreads = Runtime.getRuntime().availableProcessors() * 2;
         return new DefaultEventExecutorGroup(countThreads) {
@@ -127,6 +131,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
     }
 
     @Bean(name = "serverChannelPipelineInitializer")
+    @Scope(BeanDefinition.SCOPE_SINGLETON)
     public ServerChannelPipelineInitializer channelPipelineInitializer(){
         return new ServerChannelPipelineInitializer() {
             @Override
@@ -178,6 +183,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
     }
 
     @Bean(name = "server")
+    @Scope(BeanDefinition.SCOPE_SINGLETON)
     public ServerBootstrap serverBootstrap() {
         final ServerBootstrap server = new ServerBootstrap();
         server.group(bootGroup(), processGroup())
@@ -208,6 +214,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
      * The MongoClient class is designed to be <u>thread-safe</u> and shared among threads.
      */
     @Bean(name = "mongo", destroyMethod = "close")
+    @Scope(BeanDefinition.SCOPE_SINGLETON)
     public MongoClient mongo() throws UnknownHostException {
         final String host = config.getDatabaseHost();
         final Integer port = config.getDatabasePort();
@@ -220,6 +227,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
      * Creates a {@link MongoDbFactory} to be used by the {@link MongoTemplate}.
      */
     @Bean
+    @Scope(BeanDefinition.SCOPE_SINGLETON)
     @Override
     @SuppressWarnings("deprecation")
     public MongoDbFactory mongoDbFactory() throws Exception {
@@ -235,6 +243,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
      * MongoTemplate is <u>thread-safe</u> and can be reused across multiple instances.
      */
     @Bean(name = "serverMongoTemplate")
+    @Scope(BeanDefinition.SCOPE_SINGLETON)
     @Override
     public MongoTemplate mongoTemplate() throws Exception {
         return new MongoTemplate(mongoDbFactory(), mappingMongoConverter());
