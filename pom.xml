@@ -32,6 +32,7 @@
         <junit.version>4.12</junit.version>
         <spring-data-mongodb.version>1.7.0.RELEASE</spring-data-mongodb.version>
         <spring.version>4.1.6.RELEASE</spring.version>
+        <protobuf-java.version>2.5.0</protobuf-java.version>
     </properties>
 
     <dependencyManagement>
@@ -40,6 +41,12 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf-java.version}</version>
             </dependency>
 
             <dependency>
@@ -131,6 +138,12 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
