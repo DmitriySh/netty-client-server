@@ -4,12 +4,16 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
@@ -25,6 +29,8 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.config.CommonConfig;
+import ru.shishmakov.config.example.WorldClockProtocol;
+import ru.shishmakov.server.core.example.WorldClockServerHandler;
 import ru.shishmakov.server.dao.PackageMarkerRepository;
 import ru.shishmakov.server.entity.PackageMarkerDocument;
 import ru.shishmakov.server.service.PackageMarkerService;
@@ -83,8 +89,63 @@ public class ServerConfig extends AbstractMongoConfiguration {
 
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public PipelineSwitchHandler pipelineSwitchHandler(){
+    public ProtobufVarint32FrameDecoder protobufVarint32FrameDecoder() {
+        return new ProtobufVarint32FrameDecoder();
+    }
+
+    @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public ProtobufDecoder protobufDecoder() {
+        return new ProtobufDecoder(WorldClockProtocol.Locations.getDefaultInstance());
+    }
+
+    @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public ProtobufVarint32LengthFieldPrepender protobufVarint32LengthFieldPrepender() {
+        return new ProtobufVarint32LengthFieldPrepender();
+    }
+
+    @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public ProtobufEncoder protobufEncoder() {
+        return new ProtobufEncoder();
+    }
+
+    @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public WorldClockServerHandler worldClockServerHandler() {
+        return new WorldClockServerHandler();
+    }
+
+    @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public PipelineSwitchHandler pipelineSwitchHandler() {
         return new PipelineSwitchHandler() {
+
+            @Override
+            public WorldClockServerHandler getWorldClockServerHandler() {
+                return worldClockServerHandler();
+            }
+
+            @Override
+            public ProtobufEncoder getProtobufEncoder() {
+                return protobufEncoder();
+            }
+
+            @Override
+            public ProtobufVarint32LengthFieldPrepender getProtobufVarint32LengthFieldPrepender() {
+                return protobufVarint32LengthFieldPrepender();
+            }
+
+            @Override
+            public ProtobufDecoder getProtobufDecoder() {
+                return protobufDecoder();
+            }
+
+            @Override
+            public ChannelHandler getProtobufVarint32FrameDecoder() {
+                return protobufVarint32FrameDecoder();
+            }
 
             @Override
             public HttpRequestDecoder getHttpRequestDecoder() {
@@ -156,7 +217,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
 
     @Bean(name = "serverChannelPipelineInitializer")
     @Scope(BeanDefinition.SCOPE_SINGLETON)
-    public ServerChannelPipelineInitializer channelPipelineInitializer(){
+    public ServerChannelPipelineInitializer channelPipelineInitializer() {
         return new ServerChannelPipelineInitializer() {
             @Override
             protected PipelineSwitchHandler getPipelineSwitchHandler() {
