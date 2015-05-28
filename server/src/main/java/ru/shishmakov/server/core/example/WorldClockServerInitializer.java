@@ -1,4 +1,3 @@
-/*
 package ru.shishmakov.server.core.example;
 
 import io.netty.channel.ChannelInitializer;
@@ -9,6 +8,7 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.ssl.SslContext;
+import ru.shishmakov.config.example.WorldClockProtocol;
 
 public class WorldClockServerInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -34,4 +34,3 @@ public class WorldClockServerInitializer extends ChannelInitializer<SocketChanne
         p.addLast(new WorldClockServerHandler());
     }
 }
-*/
