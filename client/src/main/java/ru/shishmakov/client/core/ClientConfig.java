@@ -31,19 +31,24 @@ public class ClientConfig {
     @Qualifier("httpClientProcessorHandler")
     private HttpClientProcessorHandler httpClientProcessorHandler;
 
-    @Bean(name = "processGroup", destroyMethod = "shutdownGracefully")
+    @Bean(name = "processGroup", destroyMethod = "close")
+    @Scope(BeanDefinition.SCOPE_SINGLETON)
     public NioEventLoopGroup processGroup() {
-        return new NioEventLoopGroup();
+        return new NioEventLoopGroup() {
+            public void close() {
+                super.shutdownGracefully().awaitUninterruptibly();
+            }
+        };
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public HttpClientCodec httpClientCodec() {
         return new HttpClientCodec();
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public HttpObjectAggregator httpObjectAggregator() {
         return new HttpObjectAggregator(1048576);
     }

@@ -40,7 +40,7 @@ public abstract class PipelineInitializer extends ChannelInitializer<SocketChann
         pipeline
                 .addLast("frame-decoder", getProtobufVarint32FrameDecoder())
                 .addLast("decoder", getProtobufDecoder())
-                .addLast("field-prepended", getProtobufVarint32LengthFieldPrepender())
+                .addLast("field-prepender", getProtobufVarint32LengthFieldPrepender())
                 .addLast("encoder", getProtobufEncoder())
                 .addLast("processor", getWorldClockClientHandler());
     }
