@@ -1,5 +1,7 @@
 package ru.shishmakov.config;
 
+import ru.shishmakov.config.helper.ProtocolType;
+
 /**
  * @author Dmitriy Shishmakov
  */
@@ -19,8 +21,6 @@ public interface AppConfig {
 
     String getDatabaseName();
 
-    String getCollectionName();
-
     String getDatabaseUser();
 
     String getDatabasePassword();
@@ -28,5 +28,7 @@ public interface AppConfig {
     String getBindHost();
 
     Integer getBindPort();
+
+    ProtocolType getProtocolType();
 
 }

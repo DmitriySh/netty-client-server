@@ -4,7 +4,6 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -143,7 +142,7 @@ public class ServerConfig extends AbstractMongoConfiguration {
             }
 
             @Override
-            public ChannelHandler getProtobufVarint32FrameDecoder() {
+            public ProtobufVarint32FrameDecoder getProtobufVarint32FrameDecoder() {
                 return protobufVarint32FrameDecoder();
             }
 

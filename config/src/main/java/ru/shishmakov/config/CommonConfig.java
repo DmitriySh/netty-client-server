@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
+import ru.shishmakov.config.helper.ProtocolType;
 
 /**
  * Configuration class for Client and Server classes.
@@ -59,11 +60,6 @@ public class CommonConfig {
             }
 
             @Override
-            public String getCollectionName() {
-                return environment.getRequiredProperty(ConfigKey.COLLECTION_NAME);
-            }
-
-            @Override
             public String getDatabaseUser() {
                 return environment.getRequiredProperty(ConfigKey.DATABASE_USER);
             }
@@ -81,6 +77,11 @@ public class CommonConfig {
             @Override
             public Integer getBindPort() {
                 return environment.getRequiredProperty(ConfigKey.BIND_PORT, Integer.class);
+            }
+
+            @Override
+            public ProtocolType getProtocolType() {
+                return environment.getRequiredProperty(ConfigKey.PROTOCOL_TYPE, ProtocolType.class);
             }
         };
     }

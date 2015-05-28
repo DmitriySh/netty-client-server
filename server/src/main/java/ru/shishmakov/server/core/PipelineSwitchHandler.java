@@ -1,13 +1,16 @@
 package ru.shishmakov.server.core;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,11 +71,11 @@ public abstract class PipelineSwitchHandler extends ByteToMessageDecoder {
 
     protected void enableProtocolBufferPipeline(final ChannelPipeline pipeline) {
         pipeline.
-                addLast(getProtobufVarint32FrameDecoder())
-                .addLast(getProtobufDecoder())
-                .addLast(getProtobufVarint32LengthFieldPrepender())
-                .addLast(getProtobufEncoder())
-                .addLast(getWorldClockServerHandler());
+                addLast("frame-decoder", getProtobufVarint32FrameDecoder())
+                .addLast("decoder", getProtobufDecoder())
+                .addLast("field-prepended", getProtobufVarint32LengthFieldPrepender())
+                .addLast("encoder", getProtobufEncoder())
+                .addLast("processor", getWorldClockServerHandler());
         pipeline.remove(this);
     }
 
@@ -89,13 +92,13 @@ public abstract class PipelineSwitchHandler extends ByteToMessageDecoder {
 
     public abstract WorldClockServerHandler getWorldClockServerHandler();
 
-    public abstract ChannelHandler getProtobufEncoder();
+    public abstract ProtobufEncoder getProtobufEncoder();
 
-    public abstract ChannelHandler getProtobufVarint32LengthFieldPrepender();
+    public abstract ProtobufVarint32LengthFieldPrepender getProtobufVarint32LengthFieldPrepender();
 
-    public abstract ChannelHandler getProtobufDecoder();
+    public abstract ProtobufDecoder getProtobufDecoder();
 
-    public abstract ChannelHandler getProtobufVarint32FrameDecoder();
+    public abstract ProtobufVarint32FrameDecoder getProtobufVarint32FrameDecoder();
 
     public abstract HttpRequestDecoder getHttpRequestDecoder();
 
