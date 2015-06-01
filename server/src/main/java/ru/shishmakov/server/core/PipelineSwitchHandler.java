@@ -70,8 +70,8 @@ public abstract class PipelineSwitchHandler extends ByteToMessageDecoder {
     }
 
     protected void enableProtocolBufferPipeline(final ChannelPipeline pipeline) {
-        pipeline.
-                addLast("frame-decoder", getProtobufVarint32FrameDecoder())
+        pipeline
+                .addLast("frame-decoder", getProtobufVarint32FrameDecoder())
                 .addLast("decoder", getProtobufDecoder())
                 .addLast("field-prepended", getProtobufVarint32LengthFieldPrepender())
                 .addLast("encoder", getProtobufEncoder())

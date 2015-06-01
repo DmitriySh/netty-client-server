@@ -108,29 +108,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-sources</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <tasks>
-                                <exec executable="C:\Program Files (x86)\protobuf-2.5.0\src\protoc">
-                                    <arg value="--java_out=${project.basedir}/src/main/java/com/bdtools/doxecute" />
-                                    <arg value="--proto_path=${project.basedir}/src/main/java/com/bdtools/doxecute" />
-                                    <arg value="${project.basedir}/src/main/java/com/bdtools/doxecute/WorldClockProtocol.proto" />
-                                </exec>
-                            </tasks>
-                            <sourceRoot>target/generated-sources</sourceRoot>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 

@@ -81,6 +81,7 @@ public class CommonConfig {
 
             @Override
             public ProtocolType getProtocolType() {
+                // todo: rewrite
                 return environment.getRequiredProperty(ConfigKey.PROTOCOL_TYPE, ProtocolType.class);
             }
         };
