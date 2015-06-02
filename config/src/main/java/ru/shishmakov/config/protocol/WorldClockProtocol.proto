@@ -1,14 +1,14 @@
 // How to generate
 // ===============
-// $ cd example
-// $ protoc src/main/java/io/netty/example/worldclock/WorldClockProtocol.proto \
+// $ cd protocol
+// $ protoc src/main/java/io/netty/protocol/worldclock/WorldClockProtocol.proto \
 //          --java_out=src/main/java
 //
 // Add @SuppressWarnings("all") to the generated code not to pollute IDE task list.
 
 option optimize_for = SPEED;
 option java_outer_classname = "WorldClockProtocol";
-option java_package = "ru.shishmakov.config.example";
+option java_package = "ru.shishmakov.config.protocol";
 
 enum Continent {
   AFRICA = 0;

@@ -28,7 +28,6 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.shishmakov.config.AppConfig;
 import ru.shishmakov.config.CommonConfig;
-import ru.shishmakov.config.example.WorldClockProtocol;
 import ru.shishmakov.server.core.example.WorldClockServerHandler;
 import ru.shishmakov.server.dao.PackageMarkerRepository;
 import ru.shishmakov.server.entity.PackageMarkerDocument;

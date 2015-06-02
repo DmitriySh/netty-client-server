@@ -4,7 +4,6 @@ package ru.shishmakov.client.core.example;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import ru.shishmakov.config.example.WorldClockProtocol;
 
 import java.util.ArrayList;
 import java.util.Collection;
