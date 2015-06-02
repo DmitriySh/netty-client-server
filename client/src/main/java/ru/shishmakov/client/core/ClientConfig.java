@@ -15,6 +15,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.*;
 import ru.shishmakov.client.core.example.WorldClockClientHandler;
 import ru.shishmakov.config.CommonConfig;
+import ru.shishmakov.config.protocol.WorldClockProtocol;
 
 /**
  * Extension of configuration for Client
