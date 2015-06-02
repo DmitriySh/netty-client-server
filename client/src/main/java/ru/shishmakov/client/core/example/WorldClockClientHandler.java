@@ -19,25 +19,13 @@ public class WorldClockClientHandler extends
 
   private static final Pattern DELIM = Pattern.compile("/");
 
-  // Stateful properties
-  private volatile Channel channel;
-  private final BlockingQueue<WorldClockProtocol.LocalTimes> answer = new LinkedBlockingQueue<WorldClockProtocol.LocalTimes>();
+  private final BlockingQueue<WorldClockProtocol.LocalTimes> answer = new LinkedBlockingQueue<>();
 
   public WorldClockClientHandler() {
     super(false);
   }
 
   public List<String> getLocalTimes(Collection<String> cities) {
-    WorldClockProtocol.Locations.Builder builder = WorldClockProtocol.Locations.newBuilder();
-
-    for (String c : cities) {
-      String[] components = DELIM.split(c);
-      builder.addLocation(WorldClockProtocol.Location.newBuilder().
-          setContinent(WorldClockProtocol.Continent.valueOf(components[0].toUpperCase())).
-          setCity(components[1]).build());
-    }
-
-    channel.writeAndFlush(builder.build());
 
     WorldClockProtocol.LocalTimes localTimes;
     boolean interrupted = false;
@@ -69,11 +57,6 @@ public class WorldClockClientHandler extends
     }
 
     return result;
-  }
-
-  @Override
-  public void channelRegistered(ChannelHandlerContext ctx) {
-    channel = ctx.channel();
   }
 
   @Override

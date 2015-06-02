@@ -16,9 +16,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ru.shishmakov.client.core.ClientConfig;
 import ru.shishmakov.config.AppConfig;
+import ru.shishmakov.config.helper.ProtocolType;
+import ru.shishmakov.config.protocol.WorldClockProtocol;
 
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 
 
 /**
@@ -31,11 +36,16 @@ public class Client {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles
       .lookup().lookupClass());
 
+  private static final Pattern DELIM = Pattern.compile("/");
+  static final List<String> CITIES = Arrays.asList(System.getProperty(
+      "cities", "Asia/Seoul,Europe/Berlin,America/Los_Angeles").split(","));
+
   private final String host;
   private final int port;
   private final String uri;
   private final String profileId;
   private final Bootstrap client;
+  private final ProtocolType protocolType;
 
   public Client(final AnnotationConfigApplicationContext context) {
     final AppConfig config = context.getBean(AppConfig.class);
@@ -44,6 +54,7 @@ public class Client {
     this.port = config.getConnectionPort();
     this.uri = config.getConnectionUri();
     this.profileId = config.getProfileId();
+    this.protocolType = config.getProtocolType();
   }
 
   private void run() throws InterruptedException {
@@ -51,7 +62,7 @@ public class Client {
     final Channel clientChannel = client.connect(host, port).sync().channel();
 
     writeStartInfoLog(clientChannel);
-    final Object message = buildMessage();;
+    final Object message = buildMessage();
     clientChannel.writeAndFlush(message);
     writeSentInfoLog(message);
 
@@ -73,7 +84,22 @@ public class Client {
   }
 
   private Object buildMessage() {
-    return buildFullHttpRequest();
+    if (protocolType == ProtocolType.HTTP) {
+      return buildFullHttpRequest();
+    }else {
+      return buildProtobufRequest();
+    }
+  }
+
+  private Object buildProtobufRequest() {
+    final WorldClockProtocol.Locations.Builder builder = WorldClockProtocol.Locations.newBuilder();
+    for (String c : CITIES) {
+      String[] components = DELIM.split(c);
+      builder.addLocation(WorldClockProtocol.Location.newBuilder().
+          setContinent(WorldClockProtocol.Continent.valueOf(components[0].toUpperCase())).
+          setCity(components[1]).build());
+    }
+    return builder.build();
   }
 
   private FullHttpRequest buildFullHttpRequest() {
